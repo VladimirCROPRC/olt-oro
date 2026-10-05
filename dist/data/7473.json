@@ -1,1 +1,1 @@
-{"code":"","name":"TM_TM_VEST_OLT_MA5600T_1","olts":[{"name":"TM_TM_VEST_OLT_MA5600T_1","ports":[{"port":"Sl.8/11","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}}]}]}
+{"code":"","name":"TM_TM_VEST_OLT_MA5600T_1","olts":[{"name":"TM_TM_VEST_OLT_MA5600T_1","ports":[{"port":"Sl.8/11","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

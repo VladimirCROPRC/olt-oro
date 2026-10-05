@@ -1,1 +1,1 @@
-{"code":"","name":"AB_CRACIUNELUL_DE_JOS_OLT_MA5800_X17_1","olts":[{"name":"AB_CRACIUNELUL_DE_JOS_OLT_MA5800_X17_1","ports":[{"port":"1/7","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}}]}]}
+{"code":"","name":"AB_CRACIUNELUL_DE_JOS_OLT_MA5800_X17_1","olts":[{"name":"AB_CRACIUNELUL_DE_JOS_OLT_MA5800_X17_1","ports":[{"port":"1/7","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1},"dps":[{"alias":"CL5976ODF1FAN2FO1-DP1OSC1SPL1","lat":46.1732581103,"lng":23.8298570818}]}]}]}

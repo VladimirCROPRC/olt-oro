@@ -1,1 +1,1 @@
-{"code":"","name":"CT_CT_SUD_OLT_MA5600T_1","olts":[{"name":"CT_CT_SUD_OLT_MA5600T_1","ports":[{"port":"Sl.11/0","speeds":["2.5 G"],"references":7,"functions":{"SPL-2":6,"SPL-1":1}}]}]}
+{"code":"","name":"CT_CT_SUD_OLT_MA5600T_1","olts":[{"name":"CT_CT_SUD_OLT_MA5600T_1","ports":[{"port":"Sl.11/0","speeds":["2.5 G"],"references":7,"functions":{"SPL-2":6,"SPL-1":1},"dps":[{"alias":"BE5971ODF2FAN1FO9-DP300OSC300SPL1","lat":44.1433321578,"lng":28.6097216461}]}]}]}

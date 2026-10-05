@@ -1,1 +1,1 @@
-{"code":"CL0146","name":"COLIBITA (MT CJ)","olts":[{"name":"CL0146OLT0001","ports":[{"port":"1/1","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}}]}]}
+{"code":"CL0146","name":"COLIBITA (MT CJ)","olts":[{"name":"CL0146OLT0001","ports":[{"port":"1/1","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1},"dps":[{"alias":"CL0146ODF1FAN1FO1-DP01OSC01SPL1","lat":47.1655081897,"lng":24.9431470437}]}]}]}

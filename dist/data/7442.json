@@ -1,1 +1,1 @@
-{"code":"","name":"TL_ISACCEA_OLT_MA5600T_1","olts":[{"name":"TL_ISACCEA_OLT_MA5600T_1","ports":[{"port":"Sl.3/14","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}}]}]}
+{"code":"","name":"TL_ISACCEA_OLT_MA5600T_1","olts":[{"name":"TL_ISACCEA_OLT_MA5600T_1","ports":[{"port":"Sl.3/14","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

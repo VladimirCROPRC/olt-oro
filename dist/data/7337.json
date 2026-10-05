@@ -1,1 +1,1 @@
-{"code":"","name":"NT_BORLESTI_OLT_MA5600T_1","olts":[{"name":"NT_BORLESTI_OLT_MA5600T_1","ports":[{"port":"Sl.1/1","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}}]}]}
+{"code":"","name":"NT_BORLESTI_OLT_MA5600T_1","olts":[{"name":"NT_BORLESTI_OLT_MA5600T_1","ports":[{"port":"Sl.1/1","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"S02_T200","lat":46.77221672714343,"lng":26.416218383333952}]}]}]}

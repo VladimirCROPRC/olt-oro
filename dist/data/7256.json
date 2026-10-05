@@ -1,1 +1,1 @@
-{"code":"","name":"HD_ILIA_OLT_MA5608T_1","olts":[{"name":"HD_ILIA_OLT_MA5608T_1","ports":[{"port":"Sl.1/13","speeds":["2.5 G"],"references":3,"functions":{"SPL-2":3}}]}]}
+{"code":"","name":"HD_ILIA_OLT_MA5608T_1","olts":[{"name":"HD_ILIA_OLT_MA5608T_1","ports":[{"port":"Sl.1/13","speeds":["2.5 G"],"references":3,"functions":{"SPL-2":3},"dps":[]}]}]}

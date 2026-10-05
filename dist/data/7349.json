@@ -1,1 +1,1 @@
-{"code":"","name":"NT_PASTRAVENI_OLT_MA5800_X17_1","olts":[{"name":"NT_PASTRAVENI_OLT_MA5800_X17_1","ports":[{"port":"1/4","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}}]}]}
+{"code":"","name":"NT_PASTRAVENI_OLT_MA5800_X17_1","olts":[{"name":"NT_PASTRAVENI_OLT_MA5800_X17_1","ports":[{"port":"1/4","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"S5_T300","lat":47.16100799806497,"lng":26.56579517749701}]}]}]}

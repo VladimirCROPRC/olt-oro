@@ -1,1 +1,1 @@
-{"code":"","name":"NT_RAUCESTI_OLT_MA5600T_1","olts":[{"name":"NT_RAUCESTI_OLT_MA5600T_1","ports":[{"port":"3/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}}]}]}
+{"code":"","name":"NT_RAUCESTI_OLT_MA5600T_1","olts":[{"name":"NT_RAUCESTI_OLT_MA5600T_1","ports":[{"port":"3/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"S42_T93689","lat":47.25341653733827,"lng":26.359169577462602}]}]}]}

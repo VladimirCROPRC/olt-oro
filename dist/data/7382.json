@@ -1,1 +1,1 @@
-{"code":"","name":"PH_PLOIESTI_CENTRU_OLT_MA5600T_1","olts":[{"name":"PH_PLOIESTI_CENTRU_OLT_MA5600T_1","ports":[{"port":"Sl.13/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}},{"port":"Sl.18/4","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}}]}]}
+{"code":"","name":"PH_PLOIESTI_CENTRU_OLT_MA5600T_1","olts":[{"name":"PH_PLOIESTI_CENTRU_OLT_MA5600T_1","ports":[{"port":"Sl.13/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]},{"port":"Sl.18/4","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

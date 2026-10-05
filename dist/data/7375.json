@@ -1,1 +1,1 @@
-{"code":"","name":"PH_CAMPINA_OLT_TKR_NG_MA5600T_1","olts":[{"name":"PH_CAMPINA_OLT_TKR_NG_MA5600T_1","ports":[{"port":"Sl.2/0","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}},{"port":"Sl.5/2","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}}]}]}
+{"code":"","name":"PH_CAMPINA_OLT_TKR_NG_MA5600T_1","olts":[{"name":"PH_CAMPINA_OLT_TKR_NG_MA5600T_1","ports":[{"port":"Sl.2/0","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]},{"port":"Sl.5/2","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

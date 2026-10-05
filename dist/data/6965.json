@@ -1,1 +1,1 @@
-{"code":"","name":"AG_PIT_CENTRU_OLT_MA5600T_1","olts":[{"name":"AG_PIT_CENTRU_OLT_MA5600T_1","ports":[{"port":"Sl.17/12","speeds":["2.5 G"],"references":2,"functions":{"SPL-1":1,"SPL-2":1}}]}]}
+{"code":"","name":"AG_PIT_CENTRU_OLT_MA5600T_1","olts":[{"name":"AG_PIT_CENTRU_OLT_MA5600T_1","ports":[{"port":"Sl.17/12","speeds":["2.5 G"],"references":2,"functions":{"SPL-1":1,"SPL-2":1},"dps":[{"alias":"BE5984ODF6FAN11FO279-DP1SPL3-SPL1","lat":44.844287091,"lng":24.8740623735}]}]}]}

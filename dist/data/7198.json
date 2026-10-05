@@ -1,1 +1,1 @@
-{"code":"","name":"CT_CT_TOMIS_OLT_MA5600T_2","olts":[{"name":"CT_CT_TOMIS_OLT_MA5600T_2","ports":[{"port":"Sl.1/13","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}}]}]}
+{"code":"","name":"CT_CT_TOMIS_OLT_MA5600T_2","olts":[{"name":"CT_CT_TOMIS_OLT_MA5600T_2","ports":[{"port":"Sl.1/13","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

@@ -3,13 +3,15 @@
     "sourceRows": 323499,
     "nonemptyOltRows": 193515,
     "connectionReferences": 193893,
+    "level1References": 49806,
     "emptyOltRows": 129984,
     "sitesWithOlts": 501,
     "sitesInDirectory": 7658,
     "unassignedOlts": 582,
     "olts": 1094,
     "ports": 36098,
-    "malformedReferences": 0
+    "malformedReferences": 0,
+    "portsWithLevel1Dp": 35572
   },
   "unassignedOlts": {
     "B_PAJ_OLT_MA5800_X17_2": 390,

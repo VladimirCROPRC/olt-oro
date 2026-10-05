@@ -1,1 +1,1 @@
-{"code":"","name":"NT_PANGARATI_OLT_MA5800_X17_1","olts":[{"name":"NT_PANGARATI_OLT_MA5800_X17_1","ports":[{"port":"3/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}}]}]}
+{"code":"","name":"NT_PANGARATI_OLT_MA5800_X17_1","olts":[{"name":"NT_PANGARATI_OLT_MA5800_X17_1","ports":[{"port":"3/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"S38_T300_T98371","lat":46.9129896231,"lng":26.1826409098}]}]}]}

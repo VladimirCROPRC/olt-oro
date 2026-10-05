@@ -1,1 +1,1 @@
-{"code":"","name":"DB_TG_CENTRU_OLT_MA5600T_1","olts":[{"name":"DB_TG_CENTRU_OLT_MA5600T_1","ports":[{"port":"Sl.2/0","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}}]}]}
+{"code":"","name":"DB_TG_CENTRU_OLT_MA5600T_1","olts":[{"name":"DB_TG_CENTRU_OLT_MA5600T_1","ports":[{"port":"Sl.2/0","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

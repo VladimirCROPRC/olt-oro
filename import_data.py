@@ -1,5 +1,5 @@
 """Build the OLT ORO static data from the two supplied source files."""
-import argparse, json, re
+import argparse, json, re, math
 from collections import Counter, defaultdict
 from pathlib import Path
 from zipfile import ZipFile
@@ -66,11 +66,22 @@ def build(workbook, directory, output):
             key=code or 'OLT:'+name
             if key not in sites: sites[key]={'code':'','name':name,'olts':{}}
             olt=sites[key]['olts'].setdefault(name,{})
-            p=olt.setdefault(slot+'/'+port,{'port':slot+'/'+port,'speeds':set(),'references':0,'functions':Counter()})
+            p=olt.setdefault(slot+'/'+port,{'port':slot+'/'+port,'speeds':set(),'references':0,'functions':Counter(),'dps':{}})
             if speed:p['speeds'].add(speed)
             p['references']+=1
             if row.get('F'):p['functions'][row['F']]+=1
             stats['connectionReferences']+=1
+            if row.get('F')=='SPL-1':
+                stats['level1References']+=1
+                try:
+                    lat,lng=float(row['K']),float(row['L'])
+                    assert math.isfinite(lat) and math.isfinite(lng) and -90<=lat<=90 and -180<=lng<=180 and (lat!=0 or lng!=0)
+                except (KeyError,ValueError,TypeError,AssertionError):
+                    stats['level1MissingCoordinates']+=1
+                else:
+                    alias=(row.get('B') or '').strip()
+                    point={'alias':alias,'lat':lat,'lng':lng}
+                    p['dps'][(alias,lat,lng)]=point
     output.mkdir(parents=True,exist_ok=True);data=output/'data';data.mkdir(exist_ok=True)
     index=[];written=set()
     for i,(key,site) in enumerate(sorted(sites.items(),key=lambda x:natural(x[0]))):
@@ -78,7 +89,7 @@ def build(workbook, directory, output):
         for name,ports in sorted(site['olts'].items(),key=lambda x:natural(x[0])):
             records=[]
             for _,port in sorted(ports.items(),key=lambda x:natural(x[0])):
-                port['speeds']=sorted(port['speeds']);port['functions']=dict(port['functions']);records.append(port)
+                port['speeds']=sorted(port['speeds']);port['functions']=dict(port['functions']);port['dps']=list(port['dps'].values());records.append(port)
             olts.append({'name':name,'ports':records})
         count=sum(len(o['ports']) for o in olts)
         item={'id':str(i),'code':site['code'],'name':site['name'],'olts':len(olts),'ports':count}
@@ -94,6 +105,7 @@ def build(workbook, directory, output):
     stats['unassignedOlts']=sum(not s['code'] for s in index)
     stats['olts']=sum(s['olts'] for s in index);stats['ports']=sum(s['ports'] for s in index)
     stats['malformedReferences']=sum(malformed.values())
+    stats['portsWithLevel1Dp']=sum(bool(p['dps']) for site in sites.values() for olt in site['olts'].values() for p in olt.values())
     (output/'index.json').write_text(json.dumps({'sites':index,'stats':dict(stats)},ensure_ascii=False,separators=(',',':')),encoding='utf-8')
     (output.parent/'import-report.json').write_text(json.dumps({'stats':dict(stats),'unassignedOlts':dict(unmatched),'malformed':dict(malformed)},ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps(dict(stats),ensure_ascii=False),flush=True)

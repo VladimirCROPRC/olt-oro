@@ -1,1 +1,1 @@
-{"code":"","name":"VN_PANCIU_OLT_MA5600T_1","olts":[{"name":"VN_PANCIU_OLT_MA5600T_1","ports":[{"port":"Sl.6/4","speeds":["2.5 G"],"references":9,"functions":{"SPL-1":1,"SPL-2":8}}]}]}
+{"code":"","name":"VN_PANCIU_OLT_MA5600T_1","olts":[{"name":"VN_PANCIU_OLT_MA5600T_1","ports":[{"port":"Sl.6/4","speeds":["2.5 G"],"references":9,"functions":{"SPL-1":1,"SPL-2":8},"dps":[{"alias":"GA5979ODF3FAN2FO115-DP1OSC1SPL1","lat":45.9060944367,"lng":27.0934225626}]}]}]}

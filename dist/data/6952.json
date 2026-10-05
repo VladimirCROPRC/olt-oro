@@ -1,1 +1,1 @@
-{"code":"","name":"AB_AIUD_OLT_MA5600T_1","olts":[{"name":"AB_AIUD_OLT_MA5600T_1","ports":[{"port":"Sl.5/12","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}}]}]}
+{"code":"","name":"AB_AIUD_OLT_MA5600T_1","olts":[{"name":"AB_AIUD_OLT_MA5600T_1","ports":[{"port":"Sl.5/12","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"SP_35","lat":46.3075016939,"lng":23.7176180806}]}]}]}

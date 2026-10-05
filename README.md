@@ -10,7 +10,10 @@ Romanian web application for finding a site by code and viewing its OLT port lis
 - An OLT with no identifiable site code remains accessible under “OLT fără cod”. No location is guessed.
 - Comma-separated connections are imported individually. Repeated connections are grouped by OLT and board/port, with a reference count and all reported speeds.
 - Only recorded ports are shown. There is no source information about free ports or total chassis capacity. `unset` is displayed as “nespecificat”. Empty OLT cells are counted in the import report.
-- The original workbooks, splitter IDs, aliases and precise coordinates are not included in the web dataset.
+- Level-1 splitters are identified by column F = SPL-1. Their column B aliases and column K/L coordinates are included on the map, grouped at identical coordinates. SPL-2 and TV records do not supply map points.
+- Select one or more OLTs to display their DP points in green. Select DOWN ports to turn associated points red. Status is selected manually, not read from live monitoring. Stop blink keeps affected points solid red.
+- Map backgrounds: OpenStreetMap (default) and Esri World Imagery.
+- The original workbooks and splitter IDs are not included in the web dataset.
 
 ## Refresh
 

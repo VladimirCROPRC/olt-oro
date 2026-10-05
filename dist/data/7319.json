@@ -1,1 +1,1 @@
-{"code":"","name":"MM_BAIA_SPRIE_OLT_MA5800_X17_2","olts":[{"name":"MM_BAIA_SPRIE_OLT_MA5800_X17_2","ports":[{"port":"1/1","speeds":["2.5 G"],"references":6,"functions":{"SPL-2":6}}]}]}
+{"code":"","name":"MM_BAIA_SPRIE_OLT_MA5800_X17_2","olts":[{"name":"MM_BAIA_SPRIE_OLT_MA5800_X17_2","ports":[{"port":"1/1","speeds":["2.5 G"],"references":6,"functions":{"SPL-2":6},"dps":[]}]}]}
