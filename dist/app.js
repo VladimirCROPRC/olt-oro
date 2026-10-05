@@ -18,8 +18,8 @@ async function selectSite(s){
 }
 function renderDetail(){
  const d=selectedData,ports=d.olts.reduce((n,o)=>n+o.ports.length,0);
- $('detail').innerHTML=`<span class="eyebrow">${d.code?'Site selectat':'OLT fără cod de site'}</span><h1 class="site-title">${esc(d.code||d.name)}</h1>${d.code?`<p class="site-name">${esc(d.name||'Denumire absentă din lista de site-uri')}</p>`:'<p class="site-name">Codul site-ului nu este identificabil din denumirea OLT-ului.</p>'}<div class="metrics"><div class="metric"><strong>${d.olts.length}</strong><span>OLT-uri</span></div><div class="metric"><strong>${ports.toLocaleString('ro')}</strong><span>Porturi înregistrate</span></div></div>${ports?'<div class="port-tools"><input id="port-filter" type="search" aria-label="Filtrează porturile" placeholder="Filtrează OLT / placă / port"><button id="export" class="secondary" type="button">Descarcă porturile CSV</button></div><div id="olt-list"></div><p class="note">„Referințe” reprezintă numărul înregistrărilor din Excel asociate portului, nu numărul de clienți. Porturile libere nu pot fi deduse din aceste date.</p>':'<p class="note">Acest site există în lista HTML, dar nu are conexiuni OLT asociate în coloana Q a Excelului.</p>'}`;
- if(ports){renderPorts();$('port-filter').addEventListener('input',renderPorts);$('export').addEventListener('click',exportCsv)}
+ $('detail').innerHTML=`<span class="eyebrow">${d.code?'Site selectat':'OLT fără cod de site'}</span><h1 class="site-title">${esc(d.code||d.name)}</h1>${d.code?`<p class="site-name">${esc(d.name||'Denumire absentă din lista de site-uri')}</p>`:'<p class="site-name">Codul site-ului nu este identificabil din denumirea OLT-ului.</p>'}<div class="metrics"><div class="metric"><strong>${d.olts.length}</strong><span>OLT-uri</span></div><div class="metric"><strong>${ports.toLocaleString('ro')}</strong><span>Porturi înregistrate</span></div></div>${ports?'<div class="port-tools"><input id="port-filter" type="search" aria-label="Filtrează porturile" placeholder="Filtrează OLT / placă / port"></div><div id="olt-list"></div><p class="note">„Referințe” reprezintă numărul înregistrărilor din Excel asociate portului, nu numărul de clienți. Porturile libere nu pot fi deduse din aceste date.</p>':'<p class="note">Acest site există în lista HTML, dar nu are conexiuni OLT asociate în coloana Q a Excelului.</p>'}`;
+ if(ports){renderPorts();$('port-filter').addEventListener('input',renderPorts)}
 }
 function renderPorts(){
  const q=$('port-filter').value.trim().toUpperCase();
@@ -28,13 +28,6 @@ function renderPorts(){
   if(!ports.length)return '';
   return `<details class="olt" open><summary><strong>${esc(o.name)}</strong><span>${ports.length} porturi</span></summary><div class="table-wrap"><table><thead><tr><th>Placă / port</th><th>Viteză</th><th>Referințe</th><th>Tip splitter</th></tr></thead><tbody>${ports.map(p=>`<tr><td>${esc(p.port.replace(/unset/gi,'nespecificat'))}</td><td>${p.speeds.length?p.speeds.map(s=>'<span class="speed">'+esc(s)+'</span>').join(' '):'—'}</td><td class="reference">${p.references}</td><td>${Object.keys(p.functions).sort(natural).map(esc).join(', ')||'—'}</td></tr>`).join('')}</tbody></table></div></details>`;
  }).join('')||'<p class="no-results">Niciun port corespunde filtrului.</p>';
-}
-function exportCsv(){
- const cell=v=>'"'+String(v??'').replaceAll('"','""')+'"';
- const rows=[['Site','OLT','Placă / port','Viteză','Referințe','Tip splitter']];
- selectedData.olts.forEach(o=>o.ports.forEach(p=>rows.push([selectedData.code,o.name,p.port,p.speeds.join(', '),p.references,Object.keys(p.functions).join(', ')])));
- const url=URL.createObjectURL(new Blob(['\ufeff'+rows.map(r=>r.map(cell).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}));
- const a=document.createElement('a');a.href=url;a.download=(selectedData.code||'OLT')+'-porturi.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 $('search').addEventListener('input',renderResults);
 $('results').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b)selectSite(index.find(s=>s.id===b.dataset.id))});
