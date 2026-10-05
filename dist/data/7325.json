@@ -1,0 +1,1 @@
+{"code":"","name":"MS_MS_HOST_OLT_MA5800_X17_2","olts":[{"name":"MS_MS_HOST_OLT_MA5800_X17_2","ports":[{"port":"1/5","speeds":["2.5 G"],"references":6,"functions":{"SPL-1":1,"SPL-2":5}},{"port":"1/6","speeds":["2.5 G"],"references":4,"functions":{"SPL-1":1,"SPL-2":3}},{"port":"1/15","speeds":["2.5 G"],"references":4,"functions":{"SPL-1":1,"SPL-2":3}}]}]}

@@ -1,0 +1,1 @@
+{"code":"","name":"BT_DERSCA_OLT_MA5600T_1","olts":[{"name":"BT_DERSCA_OLT_MA5600T_1","ports":[{"port":"Sl.2/8","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}},{"port":"Sl.2/11","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}}]}]}

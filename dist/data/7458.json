@@ -1,0 +1,1 @@
+{"code":"","name":"TM_JIMBOLIA_OLT_MA5608T_1","olts":[{"name":"TM_JIMBOLIA_OLT_MA5608T_1","ports":[{"port":"Sl.0/11","speeds":["2.5 G"],"references":9,"functions":{"SPL-1":1,"SPL-2":8}},{"port":"Sl.0/12","speeds":["2.5 G"],"references":4,"functions":{"SPL-1":1,"SPL-2":3}}]}]}

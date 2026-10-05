@@ -1,0 +1,1 @@
+{"code":"","name":"NT_TASCA_OLT_MA5800_X17_1","olts":[{"name":"NT_TASCA_OLT_MA5800_X17_1","ports":[{"port":"1/9","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}},{"port":"1/10","speeds":["2.5 G"],"references":7,"functions":{"SPL-2":6,"SPL-1":1}},{"port":"1/11","speeds":["2.5 G"],"references":6,"functions":{"SPL-2":5,"SPL-1":1}}]}]}

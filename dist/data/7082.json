@@ -1,0 +1,1 @@
+{"code":"","name":"BZ_PATARLAGELE_OLT_MA5600T_1","olts":[{"name":"BZ_PATARLAGELE_OLT_MA5600T_1","ports":[{"port":"Sl.3/5","speeds":["2.5 G"],"references":5,"functions":{"SPL-2":4,"SPL-1":1}},{"port":"Sl.3/6","speeds":["2.5 G"],"references":2,"functions":{"SPL-1":1,"SPL-2":1}}]}]}

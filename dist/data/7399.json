@@ -1,0 +1,1 @@
+{"code":"","name":"SB_MEDIAS_OLT_MA5600T_1","olts":[{"name":"SB_MEDIAS_OLT_MA5600T_1","ports":[{"port":"Sl.1/1","speeds":["2.5 G"],"references":8,"functions":{"SPL-2":7,"SPL-1":1}},{"port":"Sl.16/9","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}},{"port":"Sl.16/10","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}}]}]}

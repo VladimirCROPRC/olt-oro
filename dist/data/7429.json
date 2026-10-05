@@ -1,0 +1,1 @@
+{"code":"","name":"SV_RADAUTI_OLT_TKR_NG_MA5600T_1","olts":[{"name":"SV_RADAUTI_OLT_TKR_NG_MA5600T_1","ports":[{"port":"Sl.14/7","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}},{"port":"Sl.18/6","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}}]}]}

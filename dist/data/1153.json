@@ -1,0 +1,1 @@
+{"code":"BA5482","name":"","olts":[{"name":"BA5482OLT00001","ports":[{"port":"1/6","speeds":["2.5 G"],"references":8,"functions":{"SPL-2":7,"SPL-1":1}},{"port":"1/7","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}},{"port":"1/8","speeds":["2.5 G"],"references":2,"functions":{"SPL-2":1,"SPL-1":1}}]}]}

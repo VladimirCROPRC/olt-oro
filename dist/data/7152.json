@@ -1,0 +1,1 @@
+{"code":"","name":"CJ_BAISOARA_OLT_MA5600T_1","olts":[{"name":"CJ_BAISOARA_OLT_MA5600T_1","ports":[{"port":"Sl.1/0","speeds":["2.5 G"],"references":9,"functions":{"SPL-1":1,"SPL-2":8}},{"port":"Sl.1/1","speeds":["2.5 G"],"references":9,"functions":{"SPL-1":1,"SPL-2":8}},{"port":"Sl.1/15","speeds":["2.5 G"],"references":4,"functions":{"SPL-1":1,"SPL-2":3}}]}]}

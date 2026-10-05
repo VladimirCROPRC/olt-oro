@@ -1,0 +1,1 @@
+{"code":"","name":"TR_ALEXANDRIA_OLT_MA5600T_1","olts":[{"name":"TR_ALEXANDRIA_OLT_MA5600T_1","ports":[{"port":"Sl.1/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}},{"port":"Sl.1/6","speeds":["2.5 G"],"references":4,"functions":{"SPL-2":4}},{"port":"Sl.1/7","speeds":["2.5 G"],"references":3,"functions":{"SPL-2":3}}]}]}

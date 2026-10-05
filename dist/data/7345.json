@@ -1,0 +1,1 @@
+{"code":"","name":"NT_ICUSESTI_OLT_MA5800_X2_1","olts":[{"name":"NT_ICUSESTI_OLT_MA5800_X2_1","ports":[{"port":"2/5","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}},{"port":"2/6","speeds":["2.5 G"],"references":9,"functions":{"SPL-1":1,"SPL-2":8}}]}]}

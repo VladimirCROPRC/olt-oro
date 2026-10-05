@@ -1,0 +1,1 @@
+{"code":"","name":"TL_TL_MAHMUDIEI_OLT_MA5600T_1","olts":[{"name":"TL_TL_MAHMUDIEI_OLT_MA5600T_1","ports":[{"port":"Sl.1/3","speeds":["2.5 G"],"references":2,"functions":{"SPL-2":2}},{"port":"Sl.1/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}},{"port":"Sl.1/6","speeds":["2.5 G"],"references":3,"functions":{"SPL-2":3}}]}]}

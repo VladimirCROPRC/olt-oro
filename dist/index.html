@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09151e"><title>OLT ORO</title>
+<link rel="stylesheet" href="style.css"><script src="app.js" defer></script>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="./"><span class="brand-icon">O</span>OLT ORO</a><span class="top-label">Site-uri și porturi OLT</span><a class="portal" href="https://portal.proconect.online" target="_blank" rel="noopener">Portal PRO APPS ↗</a></header>
+<main class="layout">
+<aside class="sidebar">
+<label class="search-label" for="search">Caută un site</label>
+<div class="search-box"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Cod site, de exemplu CL0400" autocomplete="off" spellcheck="false"></div>
+<div class="filters" role="group" aria-label="Tip rezultate"><button id="sites-tab" class="selected" type="button">Site-uri</button><button id="unknown-tab" type="button">OLT fără cod</button></div>
+<p id="search-count" class="muted" aria-live="polite">Se încarcă site-urile…</p>
+<div id="results" class="results" aria-label="Rezultatele căutării"></div>
+<p class="source-note">Porturile provin din coloana OLT a fișierului sursă. Sunt afișate doar conexiunile înregistrate.</p>
+</aside>
+<section id="detail" class="detail" aria-live="polite">
+<div class="empty"><span class="empty-icon" aria-hidden="true">⌕</span><h1>Găsește porturile unui site</h1><p>Caută codul site-ului și selectează un rezultat.<br>Fiecare OLT are propria listă de plăci și porturi.</p><button id="example" class="primary" type="button" disabled>Deschide CL0400</button></div>
+</section>
+</main>
+</body>
+</html>

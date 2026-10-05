@@ -1,0 +1,1 @@
+{"code":"","name":"DB_MORENI_OLT_MA5600T_1","olts":[{"name":"DB_MORENI_OLT_MA5600T_1","ports":[{"port":"Sl.1/9","speeds":["2.5 G"],"references":2,"functions":{"SPL-1":1,"SPL-2":1}},{"port":"Sl.3/6","speeds":["2.5 G"],"references":4,"functions":{"SPL-2":4}},{"port":"Sl.3/7","speeds":["2.5 G"],"references":8,"functions":{"SPL-2":8}}]}]}

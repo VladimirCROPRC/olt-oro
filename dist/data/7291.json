@@ -1,0 +1,1 @@
+{"code":"","name":"IS_HARLAU_OLT_MA5600T_1","olts":[{"name":"IS_HARLAU_OLT_MA5600T_1","ports":[{"port":"Sl.3/10","speeds":["2.5 G"],"references":9,"functions":{"SPL-1":1,"SPL-2":8}},{"port":"Sl.3/11","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}}]}]}

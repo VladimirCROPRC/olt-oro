@@ -1,0 +1,1 @@
+{"code":"","name":"CL_OLTENITA_OLT_MA5600T_1","olts":[{"name":"CL_OLTENITA_OLT_MA5600T_1","ports":[{"port":"Sl.3/13","speeds":["2.5 G"],"references":5,"functions":{"SPL-1":1,"SPL-2":4}},{"port":"Sl.3/15","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1}}]}]}

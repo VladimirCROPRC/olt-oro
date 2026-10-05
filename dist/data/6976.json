@@ -1,0 +1,1 @@
+{"code":"","name":"BC_BC_BALCESCU_OLT_MA5600T_2","olts":[{"name":"BC_BC_BALCESCU_OLT_MA5600T_2","ports":[{"port":"Sl.12/4","speeds":["2.5 G"],"references":2,"functions":{"SPL-1":2}},{"port":"Sl.12/6","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}},{"port":"Sl.12/7","speeds":["2.5 G"],"references":2,"functions":{"SPL-1":2}}]}]}

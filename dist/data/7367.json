@@ -1,0 +1,1 @@
+{"code":"","name":"OT_SL_LIBERTATII_OLT_2","olts":[{"name":"OT_SL_LIBERTATII_OLT_2","ports":[{"port":"1/0","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}},{"port":"1/1","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}}]}]}

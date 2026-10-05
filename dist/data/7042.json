@@ -1,0 +1,1 @@
+{"code":"","name":"BT_FLAMANZI_OLT_MA5600T_1","olts":[{"name":"BT_FLAMANZI_OLT_MA5600T_1","ports":[{"port":"Sl.3/3","speeds":["2.5 G"],"references":5,"functions":{"SPL-1":1,"SPL-2":4}},{"port":"Sl.5/12","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}}]}]}

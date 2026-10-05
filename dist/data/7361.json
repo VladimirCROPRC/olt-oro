@@ -1,0 +1,1 @@
+{"code":"","name":"NT_STANITA_OLT_MA5800_X2_1","olts":[{"name":"NT_STANITA_OLT_MA5800_X2_1","ports":[{"port":"1/0","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}},{"port":"1/1","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}},{"port":"1/2","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}}]}]}

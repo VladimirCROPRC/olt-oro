@@ -1,0 +1,4 @@
+__pycache__/
+*.xlsx
+*.htm.html
+node_modules/

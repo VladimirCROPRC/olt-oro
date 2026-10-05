@@ -1,0 +1,1 @@
+{"code":"BA0799","name":"Dornisoara (MT SV-BT)","olts":[{"name":"BA0799OLT0001","ports":[{"port":"1/0","speeds":["2.5 G"],"references":3,"functions":{"SPL-2":2,"SPL-1":1}},{"port":"1/1","speeds":["2.5 G"],"references":9,"functions":{"SPL-2":8,"SPL-1":1}},{"port":"1/2","speeds":["2.5 G"],"references":8,"functions":{"SPL-2":7,"SPL-1":1}}]}]}

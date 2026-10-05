@@ -1,0 +1,1 @@
+{"code":"","name":"HD_PETROSANI_OLT_MA5600T_1","olts":[{"name":"HD_PETROSANI_OLT_MA5600T_1","ports":[{"port":"Sl.1/12","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}},{"port":"Sl.1/13","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}},{"port":"Sl.1/15","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1}}]}]}

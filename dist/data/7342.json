@@ -1,0 +1,1 @@
+{"code":"","name":"NT_GIROV_OLT_MA5600T_1","olts":[{"name":"NT_GIROV_OLT_MA5600T_1","ports":[{"port":"Sl.3/10","speeds":["2.5 G"],"references":8,"functions":{"SPL-1":1,"SPL-2":7}},{"port":"Sl.3/11","speeds":["2.5 G"],"references":7,"functions":{"SPL-2":6,"SPL-1":1}},{"port":"Sl.3/12","speeds":["2.5 G"],"references":8,"functions":{"SPL-1":1,"SPL-2":7}}]}]}

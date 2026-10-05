@@ -1,0 +1,1 @@
+{"code":"CL30355","name":"","olts":[{"name":"CL30355OLT0001","ports":[{"port":"1/unset","speeds":["2.5 G"],"references":118,"functions":{"SPL-2":103,"SPL-1":15}},{"port":"2/unset","speeds":["2.5 G"],"references":75,"functions":{"SPL-2":60,"SPL-1":15}}]}]}
