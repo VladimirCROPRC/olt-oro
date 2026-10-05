@@ -1,5 +1,5 @@
 'use strict';
-const DATA_VERSION='20261005-8';
+const DATA_VERSION='20261005-9';
 const $=id=>document.getElementById(id),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let index=[],mode='sites',selected=null,selectedData=null,request=0;
 let selectedOlts=new Set(),downPorts=new Set(),dpMap=null,dpMarkers=null,blinkTimer=null,blinkEnabled=true,redMarkers=[],onlyDown=false;
@@ -31,11 +31,12 @@ async function selectSite(s){
 }
 function renderDetail(){
  const d=selectedData,ports=d.olts.reduce((n,o)=>n+o.ports.length,0);
- $('detail').innerHTML=`<span class="eyebrow">${d.code?'Site selectat':'OLT fără cod de site'}</span><h1 class="site-title">${esc(d.code||d.name)}</h1>${d.code?`<p class="site-name">${esc(d.name||'Denumire absentă din lista de site-uri')}</p>`:'<p class="site-name">Codul site-ului nu este identificabil din denumirea OLT-ului.</p>'}${d.code&&!d.location?'<p class="note">Coordonatele site-ului lipsesc din lista HTML.</p>':''}<div class="metrics"><div class="metric"><strong>${d.olts.length}</strong><span>OLT-uri</span></div><div class="metric"><strong>${ports.toLocaleString('ro')}</strong><span>Porturi înregistrate</span></div></div>${ports||d.location?'<div class="map-toolbar"><button id="measure" class="secondary" type="button" aria-pressed="false">Liniar</button><button id="undo-measure" class="secondary" type="button" disabled>Înapoi</button><button id="clear-measure" class="secondary" type="button">Șterge liniarul</button><span id="measure-result" class="measure-result" role="status"></span></div><div class="map-toolbar"><button id="all-olts" class="secondary" type="button">Toate OLT-urile</button><button id="no-olts" class="secondary" type="button">Niciun OLT</button><button id="clear-down" class="secondary" type="button">Resetează DOWN</button><button id="only-down" class="secondary" type="button" aria-pressed="false">Show only DOWN</button><button id="blink-toggle" class="secondary" type="button" disabled>Stop blink</button></div><div class="map-legend"><span class="map-blue">Site</span><span class="map-green">DP normal</span><span class="map-red">DP cu port DOWN</span><span>DOWN marcat manual</span></div><div id="dp-map" aria-label="Harta DP-urilor OLT selectate"></div><span id="map-count" hidden></span><span id="cable-status" hidden></span><div class="port-tools"><input id="port-filter" type="search" aria-label="Filtrează porturile" placeholder="Filtrează OLT / placă / port"></div><div id="olt-list"></div>':'<p class="note">Acest site există în lista HTML, dar nu are conexiuni OLT asociate în coloana Q a Excelului.</p>'}`;
+ $('detail').innerHTML=`<span class="eyebrow">${d.code?'Site selectat':'OLT fără cod de site'}</span><h1 class="site-title">${esc(d.code||d.name)}</h1>${d.code?`<p class="site-name">${esc(d.name||'Denumire absentă din lista de site-uri')}</p>`:'<p class="site-name">Codul site-ului nu este identificabil din denumirea OLT-ului.</p>'}${d.code&&!d.location?'<p class="note">Coordonatele site-ului lipsesc din lista HTML.</p>':''}<div class="metrics"><div class="metric"><strong>${d.olts.length}</strong><span>OLT-uri</span></div><div class="metric"><strong>${ports.toLocaleString('ro')}</strong><span>Porturi înregistrate</span></div></div>${ports||d.location?'<div class="map-toolbar"><button id="measure" class="secondary" type="button" aria-pressed="false">Liniar</button><button id="undo-measure" class="secondary" type="button" disabled>Înapoi</button><button id="clear-measure" class="secondary" type="button">Șterge liniarul</button><button id="finish-measure" class="secondary" type="button" disabled>Sfârșit măsurătoare</button><a id="measure-maps" class="secondary measure-maps" target="_blank" rel="noopener noreferrer" hidden>Google Maps ↗</a><span id="measure-result" class="measure-result" role="status"></span></div><div class="map-toolbar"><button id="all-olts" class="secondary" type="button">Toate OLT-urile</button><button id="no-olts" class="secondary" type="button">Niciun OLT</button><button id="clear-down" class="secondary" type="button">Resetează DOWN</button><button id="only-down" class="secondary" type="button" aria-pressed="false">Show only DOWN</button><button id="blink-toggle" class="secondary" type="button" disabled>Stop blink</button></div><div class="map-legend"><span class="map-blue">Site</span><span class="map-green">DP normal</span><span class="map-red">DP cu port DOWN</span><span>DOWN marcat manual</span></div><div id="dp-map" aria-label="Harta DP-urilor OLT selectate"></div><span id="map-count" hidden></span><span id="cable-status" hidden></span><div class="port-tools"><input id="port-filter" type="search" aria-label="Filtrează porturile" placeholder="Filtrează OLT / placă / port"></div><div id="olt-list"></div>':'<p class="note">Acest site există în lista HTML, dar nu are conexiuni OLT asociate în coloana Q a Excelului.</p>'}`;
  if(ports||d.location){
   const portPanel=$('port-panel');portPanel.append($('detail').querySelector('.port-tools'),$('olt-list'));document.querySelector('.sidebar').classList.add('has-site');
   initMap();renderPorts();$('port-filter').addEventListener('input',renderPorts);
   $('measure').addEventListener('click',()=>setMeasuring(!measuring));
+  $('finish-measure').addEventListener('click',()=>setMeasuring(false));
   $('clear-measure').addEventListener('click',()=>{measurePoints=[];renderMeasure()});
   $('undo-measure').addEventListener('click',()=>{measurePoints.pop();renderMeasure()});
   $('all-olts').addEventListener('click',()=>{selectedData.olts.forEach(o=>selectedOlts.add(o.name));renderPorts();renderMap(true)});
@@ -171,6 +172,13 @@ function renderMeasure(){
  if(measurePoints.length>1)L.polyline(measurePoints,{color:'#ffbd45',weight:3,dashArray:'7 5',interactive:false}).addTo(measureLayer);
  measurePoints.forEach((point,i)=>{const marker=L.circleMarker(point,{radius:5,color:'#09151e',weight:2,fillColor:'#ffbd45',fillOpacity:1,interactive:false}).addTo(measureLayer);if(i===measurePoints.length-1)marker.bindTooltip(label,{permanent:true,direction:'top',className:'ruler-label'})});
  $('undo-measure').disabled=!measurePoints.length;
+ $('finish-measure').disabled=!measuring||!measurePoints.length;
+ const maps=$('measure-maps');maps.hidden=!measurePoints.length;
+ if(measurePoints.length){
+  const coordinates=measurePoints.map(p=>p.lat+','+p.lng);
+  maps.href=coordinates.length===1?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(coordinates[0]):'https://www.google.com/maps/dir/'+coordinates.map(encodeURIComponent).join('/')+'/';
+ }
+
  $('measure-result').textContent=measurePoints.length?'Distanță totală: '+label+(measuring?' · adaugă puncte pe hartă':''):measuring?'Atinge harta pentru a selecta punctele.':'';
 }
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&measuring)setMeasuring(false)});

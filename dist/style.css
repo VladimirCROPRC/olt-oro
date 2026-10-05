@@ -17,3 +17,6 @@
 /* Compact map heading and controls. */
 .detail>.eyebrow{font-size:9px;letter-spacing:1px}.detail>.site-title{font-size:21px;line-height:1.15;margin:2px 0}.detail>.site-name{font-size:11px}.detail>.metrics{gap:6px;margin:7px 0}.detail .metric{min-width:80px;padding:5px 10px;border-radius:8px}.detail .metric strong{font-size:17px}.detail .metric span{font-size:10px}.detail .map-toolbar{gap:5px;margin-bottom:5px}.detail .map-toolbar .secondary{font-size:11px;padding:5px 8px;min-height:28px;border-radius:6px}.detail .map-legend{font-size:10px;gap:12px;margin:2px 0 5px}.detail .measure-result{font-size:11px}
 @media(max-width:800px){.detail .map-toolbar .secondary{min-height:34px;padding:6px 8px}}
+
+.detail>.eyebrow{font-size:8px}.detail>.site-title{font-size:18px}.detail>.site-name{font-size:10px}.detail>.metrics{margin:5px 0;gap:5px}.detail .metric{padding:3px 8px;min-width:70px}.detail .metric strong{font-size:15px}.detail .metric span{font-size:9px}.detail .map-toolbar{gap:4px;margin-bottom:4px}.detail .map-toolbar .secondary{font-size:10px;padding:4px 6px;min-height:24px}.detail .map-legend{font-size:9px;gap:10px}.measure-maps{text-decoration:none;display:inline-block}.measure-maps[hidden]{display:none}
+@media(max-width:800px){.detail .map-toolbar .secondary{min-height:30px;padding:5px 7px}}
