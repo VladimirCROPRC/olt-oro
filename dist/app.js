@@ -1,4 +1,5 @@
 'use strict';
+const DATA_VERSION='20261005-4';
 const $=id=>document.getElementById(id),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let index=[],mode='sites',selected=null,selectedData=null,request=0;
 let selectedOlts=new Set(),downPorts=new Set(),dpMap=null,dpMarkers=null,blinkTimer=null,blinkEnabled=true,redMarkers=[];
@@ -8,6 +9,10 @@ const dpNumbers=aliases=>Array.from(new Set(aliases.flatMap(alias=>Array.from(al
 const natural=(a,b)=>a.localeCompare(b,'ro',{numeric:true,sensitivity:'base'});
 const portKey=(olt,port)=>JSON.stringify([olt,port]);
 const coordinateKey=point=>JSON.stringify([point.lat,point.lng]);
+function locationLinks(lat,lng){
+ const point=encodeURIComponent(lat+','+lng);
+ return '<div class="location-links"><a href="https://www.google.com/maps/search/?api=1&query='+point+'" target="_blank" rel="noopener noreferrer">Google Maps ↗</a><a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint='+point+'" target="_blank" rel="noopener noreferrer">Street View ↗</a></div>';
+}
 function disposeMap(){clearInterval(blinkTimer);clearTimeout(cableTimer);cableRun++;blinkTimer=null;redMarkers=[];if(dpMap)dpMap.remove();dpMap=null;dpMarkers=null;siteMarker=null;cableGroups=null;cableVisible.clear()}
 function renderResults(){
  const q=$('search').value.trim().toUpperCase();
@@ -19,8 +24,8 @@ async function selectSite(s){
  const run=++request;disposeMap();selectedOlts.clear();downPorts.clear();blinkEnabled=true;selected=s;selectedData=null;renderResults();location.hash=encodeURIComponent(s.code||s.name);
  $('detail').innerHTML='<p class="muted">Se încarcă porturile…</p>';
  try{
-  const data=s.file?await fetch(s.file).then(r=>{if(!r.ok)throw Error();return r.json()}):{code:s.code,name:s.name,location:s.location,olts:[]};
-  if(run!==request)return;selectedData=data;renderDetail();
+  const data=s.file?await fetch(s.file+'?v='+DATA_VERSION,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error();return r.json()}):{code:s.code,name:s.name,location:s.location,olts:[]};
+  if(run!==request)return;data.location=data.location||s.location||null;selectedData=data;renderDetail();
  }catch{if(run===request)$('detail').innerHTML='<p class="error">Porturile nu au putut fi încărcate. Selectează din nou site-ul.</p>'}
 }
 function renderDetail(){
@@ -68,7 +73,7 @@ function initMap(){
  L.control.scale({imperial:false}).addTo(dpMap);dpMarkers=L.layerGroup().addTo(dpMap);
  if(selectedData.location){
   siteMarker=L.circleMarker(selectedData.location,{radius:9,color:'#f4faff',weight:2,fillColor:'#2388ff',fillOpacity:1}).addTo(dpMap);
-  siteMarker.bindPopup('<strong>'+esc(selectedData.code)+'</strong><br>'+esc(selectedData.name));
+  siteMarker.bindPopup('<strong>'+esc(selectedData.code)+'</strong><br>'+esc(selectedData.name)+locationLinks(...selectedData.location));
   siteMarker.bindTooltip(esc(selectedData.code),{permanent:true,direction:'top',className:'site-code-label'});
   dpMap.setView(selectedData.location,14);
  }
@@ -94,7 +99,7 @@ function renderMap(fit){
  for(const point of points.values()){
   const color=point.down?'#ef4444':'#22c55e';
   const marker=L.circleMarker([point.lat,point.lng],{radius:7,weight:2,color:'#07151e',fillColor:color,fillOpacity:.95,down:point.down}).addTo(dpMarkers);
-  marker.bindPopup('<strong>DP / splitter nivel 1</strong><div class="dp-popup">'+Array.from(point.connections.values()).map(c=>`<div><strong>${esc(c.alias||'Alias lipsă')}</strong><br>${esc(c.olt)} / ${esc(c.port)}${c.down?' <b class="down-label">DOWN</b>':''}</div>`).join('')+'</div>',{maxWidth:360});
+  marker.bindPopup('<strong>DP / splitter nivel 1</strong><div class="dp-popup">'+Array.from(point.connections.values()).map(c=>`<div><strong>${esc(c.alias||'Alias lipsă')}</strong><br>${esc(c.olt)} / ${esc(c.port)}${c.down?' <b class="down-label">DOWN</b>':''}</div>`).join('')+'</div>'+locationLinks(point.lat,point.lng),{maxWidth:360});
   const numbers=dpNumbers(Array.from(point.connections.values()).map(c=>c.alias));
   if(numbers.length)marker.bindTooltip(esc(numbers.join(', ')),{permanent:true,direction:'right',offset:[8,0],className:'dp-number-label'+(point.down?' dp-number-down':'')});
   if(point.down)redMarkers.push(marker);
@@ -140,7 +145,7 @@ function changeMode(value){mode=value;$('sites-tab').classList.toggle('selected'
 $('sites-tab').addEventListener('click',()=>changeMode('sites'));
 $('unknown-tab').addEventListener('click',()=>changeMode('unknown'));
 $('example').addEventListener('click',()=>{const s=index.find(s=>s.code==='CL0400');if(s){$('search').value='CL0400';changeMode('sites');selectSite(s)}});
-fetch('index.json').then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{
+fetch('index.json?v='+DATA_VERSION,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{
  index=data.sites;renderResults();$('example').disabled=false;const hash=decodeURIComponent(location.hash.slice(1));const s=hash?index.find(s=>s.code===hash||s.name===hash):null;
  if(s){$('search').value=s.code||s.name;changeMode(s.code?'sites':'unknown');selectSite(s)}
 }).catch(()=>$('search-count').textContent='Datele nu au putut fi încărcate. Reîncarcă pagina.');
