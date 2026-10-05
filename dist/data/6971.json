@@ -1,1 +1,1 @@
-{"code":"","name":"AR_AR_REVOLUTIEI_OLT_MA5600T_1","olts":[{"name":"AR_AR_REVOLUTIEI_OLT_MA5600T_1","ports":[{"port":"Sl.1/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}
+{"code":"","name":"AR_AR_REVOLUTIEI_OLT_MA5600T_1","location":null,"olts":[{"name":"AR_AR_REVOLUTIEI_OLT_MA5600T_1","ports":[{"port":"Sl.1/5","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

@@ -2,10 +2,13 @@
 const $=id=>document.getElementById(id),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let index=[],mode='sites',selected=null,selectedData=null,request=0;
 let selectedOlts=new Set(),downPorts=new Set(),dpMap=null,dpMarkers=null,blinkTimer=null,blinkEnabled=true,redMarkers=[];
+let siteMarker=null,cableGroups=null,cableVisible=new Map(),cableRun=0,cableTimer=null,cableManifestPromise=null;
+const CABLE_SOURCE='https://oro.proconect.online/';
+const dpNumbers=aliases=>Array.from(new Set(aliases.flatMap(alias=>Array.from(alias.matchAll(/DP[\s_-]*(\d+)/gi),m=>'DP'+m[1])))).sort(natural);
 const natural=(a,b)=>a.localeCompare(b,'ro',{numeric:true,sensitivity:'base'});
 const portKey=(olt,port)=>JSON.stringify([olt,port]);
 const coordinateKey=point=>JSON.stringify([point.lat,point.lng]);
-function disposeMap(){clearInterval(blinkTimer);blinkTimer=null;redMarkers=[];if(dpMap)dpMap.remove();dpMap=null;dpMarkers=null}
+function disposeMap(){clearInterval(blinkTimer);clearTimeout(cableTimer);cableRun++;blinkTimer=null;redMarkers=[];if(dpMap)dpMap.remove();dpMap=null;dpMarkers=null;siteMarker=null;cableGroups=null;cableVisible.clear()}
 function renderResults(){
  const q=$('search').value.trim().toUpperCase();
  const matches=index.filter(s=>(mode==='sites'?!!s.code:!s.code)&&(!q||(s.code+' '+s.name).toUpperCase().includes(q))).sort((a,b)=>Number(b.code===q)-Number(a.code===q)||Number(!!b.olts)-Number(!!a.olts)||natural(a.code||a.name,b.code||b.name));
@@ -16,14 +19,14 @@ async function selectSite(s){
  const run=++request;disposeMap();selectedOlts.clear();downPorts.clear();blinkEnabled=true;selected=s;selectedData=null;renderResults();location.hash=encodeURIComponent(s.code||s.name);
  $('detail').innerHTML='<p class="muted">Se încarcă porturile…</p>';
  try{
-  const data=s.file?await fetch(s.file).then(r=>{if(!r.ok)throw Error();return r.json()}):{code:s.code,name:s.name,olts:[]};
+  const data=s.file?await fetch(s.file).then(r=>{if(!r.ok)throw Error();return r.json()}):{code:s.code,name:s.name,location:s.location,olts:[]};
   if(run!==request)return;selectedData=data;renderDetail();
  }catch{if(run===request)$('detail').innerHTML='<p class="error">Porturile nu au putut fi încărcate. Selectează din nou site-ul.</p>'}
 }
 function renderDetail(){
  const d=selectedData,ports=d.olts.reduce((n,o)=>n+o.ports.length,0);
- $('detail').innerHTML=`<span class="eyebrow">${d.code?'Site selectat':'OLT fără cod de site'}</span><h1 class="site-title">${esc(d.code||d.name)}</h1>${d.code?`<p class="site-name">${esc(d.name||'Denumire absentă din lista de site-uri')}</p>`:'<p class="site-name">Codul site-ului nu este identificabil din denumirea OLT-ului.</p>'}<div class="metrics"><div class="metric"><strong>${d.olts.length}</strong><span>OLT-uri</span></div><div class="metric"><strong>${ports.toLocaleString('ro')}</strong><span>Porturi înregistrate</span></div></div>${ports?'<div class="map-toolbar"><button id="all-olts" class="secondary" type="button">Toate OLT-urile</button><button id="no-olts" class="secondary" type="button">Niciun OLT</button><button id="clear-down" class="secondary" type="button">Resetează DOWN</button><button id="blink-toggle" class="secondary" type="button" disabled>Stop blink</button></div><div class="map-legend"><span class="map-green">DP normal</span><span class="map-red">DP cu port DOWN</span><span>DOWN marcat manual</span></div><div id="dp-map" aria-label="Harta DP-urilor OLT selectate"></div><p id="map-count" class="note" role="status">Bifează un OLT pentru a afișa DP-urile pe hartă.</p><div class="port-tools"><input id="port-filter" type="search" aria-label="Filtrează porturile" placeholder="Filtrează OLT / placă / port"></div><div id="olt-list"></div><p class="note">DP-urile provin din splitterele SPL-1, cu aliasul din coloana B. „Referințe” reprezintă înregistrările Excel asociate portului. Porturile libere nu pot fi deduse din aceste date.</p>':'<p class="note">Acest site există în lista HTML, dar nu are conexiuni OLT asociate în coloana Q a Excelului.</p>'}`;
- if(ports){
+ $('detail').innerHTML=`<span class="eyebrow">${d.code?'Site selectat':'OLT fără cod de site'}</span><h1 class="site-title">${esc(d.code||d.name)}</h1>${d.code?`<p class="site-name">${esc(d.name||'Denumire absentă din lista de site-uri')}</p>`:'<p class="site-name">Codul site-ului nu este identificabil din denumirea OLT-ului.</p>'}${d.code&&!d.location?'<p class="note">Coordonatele site-ului lipsesc din lista HTML.</p>':''}<div class="metrics"><div class="metric"><strong>${d.olts.length}</strong><span>OLT-uri</span></div><div class="metric"><strong>${ports.toLocaleString('ro')}</strong><span>Porturi înregistrate</span></div></div>${ports||d.location?'<div class="map-toolbar"><button id="all-olts" class="secondary" type="button">Toate OLT-urile</button><button id="no-olts" class="secondary" type="button">Niciun OLT</button><button id="clear-down" class="secondary" type="button">Resetează DOWN</button><button id="blink-toggle" class="secondary" type="button" disabled>Stop blink</button></div><div class="map-legend"><span class="map-blue">Site</span><span class="map-green">DP normal</span><span class="map-red">DP cu port DOWN</span><span>DOWN marcat manual</span></div><div id="dp-map" aria-label="Harta DP-urilor OLT selectate"></div><p id="map-count" class="note" role="status">Bifează un OLT pentru a afișa DP-urile pe hartă.</p><p id="cable-status" class="note" role="status"></p><div class="port-tools"><input id="port-filter" type="search" aria-label="Filtrează porturile" placeholder="Filtrează OLT / placă / port"></div><div id="olt-list"></div><p class="note">DP-urile provin din splitterele SPL-1, cu aliasul din coloana B. „Referințe” reprezintă înregistrările Excel asociate portului. Porturile libere nu pot fi deduse din aceste date.</p>':'<p class="note">Acest site există în lista HTML, dar nu are conexiuni OLT asociate în coloana Q a Excelului.</p>'}`;
+ if(ports||d.location){
   initMap();renderPorts();$('port-filter').addEventListener('input',renderPorts);
   $('all-olts').addEventListener('click',()=>{selectedData.olts.forEach(o=>selectedOlts.add(o.name));renderPorts();renderMap(true)});
   $('no-olts').addEventListener('click',()=>{selectedOlts.clear();downPorts.clear();renderPorts();renderMap(false)});
@@ -60,8 +63,17 @@ function initMap(){
  dpMap=L.map('dp-map',{preferCanvas:true,renderer:L.canvas({tolerance:L.Browser.touch?10:5})}).setView([45.8,24.9],7);
  const streets=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxNativeZoom:19,maxZoom:20,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(dpMap);
  const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,attribution:'Imagery © Esri'});
- L.control.layers({'OpenStreetMap':streets,'ESRI Satellite':satellite},{},{collapsed:false}).addTo(dpMap);
+ cableGroups=new Map([['fo-orange',L.layerGroup().addTo(dpMap)],['fo-oroc',L.layerGroup()]]);
+ L.control.layers({'OpenStreetMap':streets,'ESRI Satellite':satellite},{'FO Orange':cableGroups.get('fo-orange'),'FO OROC':cableGroups.get('fo-oroc')},{collapsed:false}).addTo(dpMap);
  L.control.scale({imperial:false}).addTo(dpMap);dpMarkers=L.layerGroup().addTo(dpMap);
+ if(selectedData.location){
+  siteMarker=L.circleMarker(selectedData.location,{radius:9,color:'#f4faff',weight:2,fillColor:'#2388ff',fillOpacity:1}).addTo(dpMap);
+  siteMarker.bindPopup('<strong>'+esc(selectedData.code)+'</strong><br>'+esc(selectedData.name));
+  siteMarker.bindTooltip(esc(selectedData.code),{permanent:true,direction:'top',className:'site-code-label'});
+  dpMap.setView(selectedData.location,14);
+ }
+ dpMap.on('moveend overlayadd overlayremove',()=>{clearTimeout(cableTimer);cableTimer=setTimeout(refreshCables,250)});
+ refreshCables();
  requestAnimationFrame(()=>dpMap?.invalidateSize());
 }
 function renderMap(fit){
@@ -83,11 +95,39 @@ function renderMap(fit){
   const color=point.down?'#ef4444':'#22c55e';
   const marker=L.circleMarker([point.lat,point.lng],{radius:7,weight:2,color:'#07151e',fillColor:color,fillOpacity:.95,down:point.down}).addTo(dpMarkers);
   marker.bindPopup('<strong>DP / splitter nivel 1</strong><div class="dp-popup">'+Array.from(point.connections.values()).map(c=>`<div><strong>${esc(c.alias||'Alias lipsă')}</strong><br>${esc(c.olt)} / ${esc(c.port)}${c.down?' <b class="down-label">DOWN</b>':''}</div>`).join('')+'</div>',{maxWidth:360});
+  const numbers=dpNumbers(Array.from(point.connections.values()).map(c=>c.alias));
+  if(numbers.length)marker.bindTooltip(esc(numbers.join(', ')),{permanent:true,direction:'right',offset:[8,0],className:'dp-number-label'+(point.down?' dp-number-down':'')});
   if(point.down)redMarkers.push(marker);
  }
- if(fit&&points.size)dpMap.fitBounds(L.latLngBounds(Array.from(points.values()).map(p=>[p.lat,p.lng])),{padding:[30,30],maxZoom:16});
+ if(fit&&points.size){const extent=Array.from(points.values()).map(p=>[p.lat,p.lng]);if(selectedData.location)extent.push(selectedData.location);dpMap.fitBounds(L.latLngBounds(extent),{padding:[30,30],maxZoom:16})}
+ siteMarker?.bringToFront();
  $('map-count').textContent=selectedOlts.size?`${points.size} DP pe hartă · ${redMarkers.length} DOWN${missing?' · '+missing+' porturi fără DP SPL-1 cu coordonate':''}${downMissing?' ('+downMissing+' marcate DOWN)':''}`:'Bifează un OLT pentru a afișa DP-urile pe hartă.';
  updateBlink();
+}
+async function refreshCables(){
+ const map=dpMap,groups=cableGroups,run=++cableRun;if(!map||!groups)return;
+ const status=$('cable-status');
+ try{
+  if(!cableManifestPromise)cableManifestPromise=fetch(CABLE_SOURCE+'layers.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).catch(e=>{cableManifestPromise=null;throw e});
+  const manifest=await cableManifestPromise;if(run!==cableRun||map!==dpMap)return;
+  const bounds=map.getBounds(),hits=b=>b[0]<=bounds.getEast()&&b[2]>=bounds.getWest()&&b[1]<=bounds.getNorth()&&b[3]>=bounds.getSouth();
+  const wanted=[];
+  if(map.getZoom()>=11){for(const layer of manifest.layers){const group=groups.get(layer.id);if(group&&map.hasLayer(group))for(const shard of layer.shards||[])if(hits(shard.bounds))wanted.push({layer,shard,key:layer.id+'/'+shard.file})}}
+  const keys=new Set(wanted.map(s=>s.key));for(const [key,item] of cableVisible){if(!keys.has(key)){item.group.removeLayer(item.geo);cableVisible.delete(key)}}
+  if(map.getZoom()<11){if(status)status.textContent='Mărește harta pentru a vedea cablurile FO.';return}
+  if(status)status.textContent='Se încarcă cablurile din ORO…';
+  let i=0;
+  async function worker(){while(i<wanted.length&&run===cableRun){const item=wanted[i++];if(cableVisible.has(item.key))continue;
+   const response=await fetch(CABLE_SOURCE+item.shard.file);if(!response.ok)throw Error('shard');
+   const data=item.shard.file.endsWith('.gz')?JSON.parse(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text()):await response.json();
+   if(run!==cableRun||map!==dpMap)return;
+   const features=data.c?data.c.map((c,j)=>({type:'Feature',id:String(j),properties:c[0],geometry:{type:c[2]?'MultiLineString':'LineString',coordinates:c[1]}})):data.features;
+   const geo=L.geoJSON({type:'FeatureCollection',features},{interactive:false,style:f=>({interactive:false,color:f.properties._color||({b:'#0000ff',g:'#00ff00',r:'#ff0000',c:'#35d6ff'})[f.properties._c]||item.layer.color,weight:2.5,opacity:f.properties._opacity??.9})});
+   const group=groups.get(item.layer.id);geo.addTo(group);geo.eachLayer(l=>l.bringToBack());cableVisible.set(item.key,{group,geo});
+  }}
+  await Promise.all(Array.from({length:Math.min(4,wanted.length)},worker));
+  if(run===cableRun&&map===dpMap){siteMarker?.bringToFront();if(status)status.textContent='Cabluri FO din oro.proconect.online · culori originale'}
+ }catch{if(run===cableRun&&map===dpMap&&status)status.textContent='Cablurile ORO nu au putut fi încărcate. Mută harta pentru a reîncerca.'}
 }
 function updateBlink(){
  clearInterval(blinkTimer);blinkTimer=null;redMarkers.forEach(m=>m.setStyle({fillOpacity:.95,opacity:1}));

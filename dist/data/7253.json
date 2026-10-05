@@ -1,1 +1,1 @@
-{"code":"","name":"HD_DV_ARRAS_OLT_MA5800_X17_2","olts":[{"name":"HD_DV_ARRAS_OLT_MA5800_X17_2","ports":[{"port":"1/4","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"HD_DV_ARRAS_2_FO6","lat":45.9125868034,"lng":22.8592055017}]}]}]}
+{"code":"","name":"HD_DV_ARRAS_OLT_MA5800_X17_2","location":null,"olts":[{"name":"HD_DV_ARRAS_OLT_MA5800_X17_2","ports":[{"port":"1/4","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"HD_DV_ARRAS_2_FO6","lat":45.9125868034,"lng":22.8592055017}]}]}]}

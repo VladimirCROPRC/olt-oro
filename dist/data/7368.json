@@ -1,1 +1,1 @@
-{"code":"","name":"OT_SL_LIBERTATII_OLT_MA5600T_1","olts":[{"name":"OT_SL_LIBERTATII_OLT_MA5600T_1","ports":[{"port":"Sl.16/11","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}
+{"code":"","name":"OT_SL_LIBERTATII_OLT_MA5600T_1","location":null,"olts":[{"name":"OT_SL_LIBERTATII_OLT_MA5600T_1","ports":[{"port":"Sl.16/11","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

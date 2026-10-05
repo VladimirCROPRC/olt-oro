@@ -1,1 +1,1 @@
-{"code":"","name":"B_PSC_805_42159_OLT_MA5608T_1","olts":[{"name":"B_PSC_805_42159_OLT_MA5608T_1","ports":[{"port":"Sl.0/4","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]},{"port":"Sl.0/15","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}
+{"code":"","name":"B_PSC_805_42159_OLT_MA5608T_1","location":null,"olts":[{"name":"B_PSC_805_42159_OLT_MA5608T_1","ports":[{"port":"Sl.0/4","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]},{"port":"Sl.0/15","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

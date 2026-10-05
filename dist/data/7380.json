@@ -1,1 +1,1 @@
-{"code":"","name":"PH_MIZIL_OLT_MA5603T_1","olts":[{"name":"PH_MIZIL_OLT_MA5603T_1","ports":[{"port":"Sl.0/3","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}
+{"code":"","name":"PH_MIZIL_OLT_MA5603T_1","location":null,"olts":[{"name":"PH_MIZIL_OLT_MA5603T_1","ports":[{"port":"Sl.0/3","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

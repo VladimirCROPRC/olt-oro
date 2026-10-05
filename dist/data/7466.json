@@ -1,1 +1,1 @@
-{"code":"","name":"TM_TM_EMINESCU_OLT_MA5800_X17_2","olts":[{"name":"TM_TM_EMINESCU_OLT_MA5800_X17_2","ports":[{"port":"1/3","speeds":["2.5 G"],"references":8,"functions":{"SPL-2":8},"dps":[]},{"port":"1/4","speeds":["2.5 G"],"references":7,"functions":{"SPL-2":7},"dps":[]}]}]}
+{"code":"","name":"TM_TM_EMINESCU_OLT_MA5800_X17_2","location":null,"olts":[{"name":"TM_TM_EMINESCU_OLT_MA5800_X17_2","ports":[{"port":"1/3","speeds":["2.5 G"],"references":8,"functions":{"SPL-2":8},"dps":[]},{"port":"1/4","speeds":["2.5 G"],"references":7,"functions":{"SPL-2":7},"dps":[]}]}]}

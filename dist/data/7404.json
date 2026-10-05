@@ -1,1 +1,1 @@
-{"code":"","name":"SB_TALMACIU_OLT_MA5600T_1","olts":[{"name":"SB_TALMACIU_OLT_MA5600T_1","ports":[{"port":"Sl.2/6","speeds":["2.5 G"],"references":2,"functions":{"SPL-2":2},"dps":[]}]}]}
+{"code":"","name":"SB_TALMACIU_OLT_MA5600T_1","location":null,"olts":[{"name":"SB_TALMACIU_OLT_MA5600T_1","ports":[{"port":"Sl.2/6","speeds":["2.5 G"],"references":2,"functions":{"SPL-2":2},"dps":[]}]}]}

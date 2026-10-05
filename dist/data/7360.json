@@ -1,1 +1,1 @@
-{"code":"","name":"NT_SAVINESTI_OLT_MA5600T_1","olts":[{"name":"NT_SAVINESTI_OLT_MA5600T_1","ports":[{"port":"Sl.1/13","speeds":["2.5 G"],"references":4,"functions":{"SPL-1":1,"SPL-2":3},"dps":[{"alias":"S18_T300","lat":46.8388096011,"lng":26.5096099752}]}]}]}
+{"code":"","name":"NT_SAVINESTI_OLT_MA5600T_1","location":null,"olts":[{"name":"NT_SAVINESTI_OLT_MA5600T_1","ports":[{"port":"Sl.1/13","speeds":["2.5 G"],"references":4,"functions":{"SPL-1":1,"SPL-2":3},"dps":[{"alias":"S18_T300","lat":46.8388096011,"lng":26.5096099752}]}]}]}

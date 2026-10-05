@@ -1,1 +1,1 @@
-{"code":"","name":"BT_MANOLEASA_OLT_MA5800_X17_1","olts":[{"name":"BT_MANOLEASA_OLT_MA5800_X17_1","ports":[{"port":"2/0","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"S022_48FO_FL","lat":48.00294283204355,"lng":27.029193727432332}]}]}]}
+{"code":"","name":"BT_MANOLEASA_OLT_MA5800_X17_1","location":null,"olts":[{"name":"BT_MANOLEASA_OLT_MA5800_X17_1","ports":[{"port":"2/0","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"S022_48FO_FL","lat":48.00294283204355,"lng":27.029193727432332}]}]}]}

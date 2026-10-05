@@ -1,1 +1,1 @@
-{"code":"","name":"AB_BLAJ_OLT_MA5600T_1","olts":[{"name":"AB_BLAJ_OLT_MA5600T_1","ports":[{"port":"Sl.1/15","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}
+{"code":"","name":"AB_BLAJ_OLT_MA5600T_1","location":null,"olts":[{"name":"AB_BLAJ_OLT_MA5600T_1","ports":[{"port":"Sl.1/15","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

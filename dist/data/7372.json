@@ -1,1 +1,1 @@
-{"code":"","name":"PH_CAMPINA_OLT_MA5600T_1","olts":[{"name":"PH_CAMPINA_OLT_MA5600T_1","ports":[{"port":"Sl.1/0","speeds":["2.5 G"],"references":2,"functions":{"SPL-2":1,"SPL-1":1},"dps":[{"alias":"PH_CAMPINA_1_FO11_10","lat":45.1238444044,"lng":25.7345000699}]}]}]}
+{"code":"","name":"PH_CAMPINA_OLT_MA5600T_1","location":null,"olts":[{"name":"PH_CAMPINA_OLT_MA5600T_1","ports":[{"port":"Sl.1/0","speeds":["2.5 G"],"references":2,"functions":{"SPL-2":1,"SPL-1":1},"dps":[{"alias":"PH_CAMPINA_1_FO11_10","lat":45.1238444044,"lng":25.7345000699}]}]}]}

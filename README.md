@@ -13,6 +13,8 @@ Romanian web application for finding a site by code and viewing its OLT port lis
 - Level-1 splitters are identified by column F = SPL-1. Their column B aliases and column K/L coordinates are included on the map, grouped at identical coordinates. SPL-2 and TV records do not supply map points.
 - Select one or more OLTs to display their DP points in green. Select DOWN ports to turn associated points red. Status is selected manually, not read from live monitoring. Stop blink keeps affected points solid red.
 - Map backgrounds: OpenStreetMap (default) and Esri World Imagery.
+- The selected site is blue, using coordinates from the HTML directory. DP labels include only DP numbers found in column B aliases. Missing site coordinates or DP numbers are not guessed.
+- FO Orange and optional FO OROC cables load directly from https://oro.proconect.online/layers.json and its compressed shards, using CORS. Original cable colours are preserved. Only visible-area shards load at zoom 11 or greater. No KMZ is used by this application.
 - The original workbooks and splitter IDs are not included in the web dataset.
 
 ## Refresh

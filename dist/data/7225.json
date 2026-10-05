@@ -1,1 +1,1 @@
-{"code":"","name":"DB_TG_CENTRU_OLT_TKR_NG_MA5600T_2","olts":[{"name":"DB_TG_CENTRU_OLT_TKR_NG_MA5600T_2","ports":[{"port":"Sl.1/7","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}
+{"code":"","name":"DB_TG_CENTRU_OLT_TKR_NG_MA5600T_2","location":null,"olts":[{"name":"DB_TG_CENTRU_OLT_TKR_NG_MA5600T_2","ports":[{"port":"Sl.1/7","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

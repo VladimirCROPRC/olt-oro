@@ -1,1 +1,1 @@
-{"code":"","name":"SV_FALTICENI_OLT_MA5600T_1","olts":[{"name":"SV_FALTICENI_OLT_MA5600T_1","ports":[{"port":"Sl.3/7","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"S014_T1","lat":47.4629408952,"lng":26.2976735657}]}]}]}
+{"code":"","name":"SV_FALTICENI_OLT_MA5600T_1","location":null,"olts":[{"name":"SV_FALTICENI_OLT_MA5600T_1","ports":[{"port":"Sl.3/7","speeds":["2.5 G"],"references":1,"functions":{"SPL-1":1},"dps":[{"alias":"S014_T1","lat":47.4629408952,"lng":26.2976735657}]}]}]}

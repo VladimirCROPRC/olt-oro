@@ -1,1 +1,1 @@
-{"code":"","name":"GR_MIHAILESTI_OLT_MA5608T_1","olts":[{"name":"GR_MIHAILESTI_OLT_MA5608T_1","ports":[{"port":"Sl.0/1","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}
+{"code":"","name":"GR_MIHAILESTI_OLT_MA5608T_1","location":null,"olts":[{"name":"GR_MIHAILESTI_OLT_MA5608T_1","ports":[{"port":"Sl.0/1","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

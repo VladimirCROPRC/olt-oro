@@ -1,1 +1,1 @@
-{"code":"","name":"VS_BARLAD_OLT_MA5600T_2","olts":[{"name":"VS_BARLAD_OLT_MA5600T_2","ports":[{"port":"Sl.1/12","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}
+{"code":"","name":"VS_BARLAD_OLT_MA5600T_2","location":null,"olts":[{"name":"VS_BARLAD_OLT_MA5600T_2","ports":[{"port":"Sl.1/12","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

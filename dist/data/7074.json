@@ -1,1 +1,1 @@
-{"code":"","name":"BV_SACELE_OLT_MA5800_X17_2","olts":[{"name":"BV_SACELE_OLT_MA5800_X17_2","ports":[{"port":"1/11","speeds":["2.5 G"],"references":2,"functions":{"SPL-1":1,"SPL-2":1},"dps":[{"alias":"S14825_2_196","lat":45.60850559135354,"lng":25.669946430403247}]}]}]}
+{"code":"","name":"BV_SACELE_OLT_MA5800_X17_2","location":null,"olts":[{"name":"BV_SACELE_OLT_MA5800_X17_2","ports":[{"port":"1/11","speeds":["2.5 G"],"references":2,"functions":{"SPL-1":1,"SPL-2":1},"dps":[{"alias":"S14825_2_196","lat":45.60850559135354,"lng":25.669946430403247}]}]}]}

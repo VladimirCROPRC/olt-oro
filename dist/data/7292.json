@@ -1,1 +1,1 @@
-{"code":"","name":"IS_IS_DACIA_OLT_MA5600T_1","olts":[{"name":"IS_IS_DACIA_OLT_MA5600T_1","ports":[{"port":"Sl.18/15","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}
+{"code":"","name":"IS_IS_DACIA_OLT_MA5600T_1","location":null,"olts":[{"name":"IS_IS_DACIA_OLT_MA5600T_1","ports":[{"port":"Sl.18/15","speeds":["2.5 G"],"references":1,"functions":{"SPL-2":1},"dps":[]}]}]}

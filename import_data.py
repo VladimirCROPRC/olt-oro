@@ -3,6 +3,7 @@ import argparse, json, re, math
 from collections import Counter, defaultdict
 from pathlib import Path
 from zipfile import ZipFile
+from urllib.parse import urlparse, parse_qs
 from lxml import etree, html
 
 def rows(path):
@@ -40,7 +41,11 @@ def build(workbook, directory, output):
         match=re.match(r'^([A-Z]{2}\d{3,6})\b\s*(.*)',text,re.I)
         if match:
             code=match[1].upper()
-            sites.setdefault(code,{'code':code,'name':match[2],'olts':{}})
+            site=sites.setdefault(code,{'code':code,'name':match[2],'olts':{}})
+            try:
+                lat,lng=map(float,parse_qs(urlparse(link.get('href','')).query)['q'][0].split(','))
+                if math.isfinite(lat) and math.isfinite(lng) and -90<=lat<=90 and -180<=lng<=180:site['location']=[lat,lng]
+            except (KeyError,ValueError,TypeError):pass
     equipment={}; stats=Counter(); unmatched=Counter(); malformed=Counter()
     for number,row in rows(workbook):
         if number==1:
@@ -93,10 +98,11 @@ def build(workbook, directory, output):
             olts.append({'name':name,'ports':records})
         count=sum(len(o['ports']) for o in olts)
         item={'id':str(i),'code':site['code'],'name':site['name'],'olts':len(olts),'ports':count}
+        if site.get('location'):item['location']=site['location']
         if olts:
             item['file']='data/'+str(i)+'.json'
             written.add(item['file'])
-            (output/item['file']).write_text(json.dumps({'code':site['code'],'name':site['name'],'olts':olts},ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+            (output/item['file']).write_text(json.dumps({'code':site['code'],'name':site['name'],'location':site.get('location'),'olts':olts},ensure_ascii=False,separators=(',',':')),encoding='utf-8')
         index.append(item)
     for stale in data.glob('*.json'):
         if 'data/'+stale.name not in written:stale.unlink()
