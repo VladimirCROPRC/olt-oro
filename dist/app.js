@@ -1,8 +1,8 @@
 'use strict';
-const DATA_VERSION='20261005-5';
+const DATA_VERSION='20261005-6';
 const $=id=>document.getElementById(id),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let index=[],mode='sites',selected=null,selectedData=null,request=0;
-let selectedOlts=new Set(),downPorts=new Set(),dpMap=null,dpMarkers=null,blinkTimer=null,blinkEnabled=true,redMarkers=[];
+let selectedOlts=new Set(),downPorts=new Set(),dpMap=null,dpMarkers=null,blinkTimer=null,blinkEnabled=true,redMarkers=[],onlyDown=false;
 let siteMarker=null,cableGroups=null,cableVisible=new Map(),cableRun=0,cableTimer=null,cableManifestPromise=null;
 const CABLE_SOURCE='https://oro.proconect.online/';
 const dpNumbers=aliases=>Array.from(new Set(aliases.flatMap(alias=>Array.from(alias.matchAll(/DP[\s_-]*(\d+)/gi),m=>'DP'+m[1])))).sort(natural);
@@ -21,7 +21,7 @@ function renderResults(){
  $('results').innerHTML=matches.slice(0,100).map(s=>`<button class="result ${selected?.id===s.id?'selected':''}" type="button" data-id="${s.id}" ${selected?.id===s.id?'aria-current="true"':''}><strong>${esc(s.code||s.name)}</strong>${s.code?`<span class="name">${esc(s.name||'Denumire absentă din lista de site-uri')}</span>`:''}<span class="counts">${s.olts?s.olts+' OLT · '+s.ports.toLocaleString('ro')+' porturi':'Fără OLT în fișierul Excel'}</span></button>`).join('')||'<p class="no-results">Niciun rezultat. Încearcă alt cod sau nume.</p>';
 }
 async function selectSite(s){
- const run=++request;disposeMap();selectedOlts.clear();downPorts.clear();blinkEnabled=true;selected=s;selectedData=null;renderResults();location.hash=encodeURIComponent(s.code||s.name);
+ const run=++request;disposeMap();selectedOlts.clear();downPorts.clear();blinkEnabled=true;onlyDown=false;selected=s;selectedData=null;renderResults();location.hash=encodeURIComponent(s.code||s.name);
  $('detail').innerHTML='<p class="muted">Se încarcă porturile…</p>';
  try{
   const data=s.file?await fetch(s.file+'?v='+DATA_VERSION,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error();return r.json()}):{code:s.code,name:s.name,location:s.location,olts:[]};
@@ -30,13 +30,14 @@ async function selectSite(s){
 }
 function renderDetail(){
  const d=selectedData,ports=d.olts.reduce((n,o)=>n+o.ports.length,0);
- $('detail').innerHTML=`<span class="eyebrow">${d.code?'Site selectat':'OLT fără cod de site'}</span><h1 class="site-title">${esc(d.code||d.name)}</h1>${d.code?`<p class="site-name">${esc(d.name||'Denumire absentă din lista de site-uri')}</p>`:'<p class="site-name">Codul site-ului nu este identificabil din denumirea OLT-ului.</p>'}${d.code&&!d.location?'<p class="note">Coordonatele site-ului lipsesc din lista HTML.</p>':''}<div class="metrics"><div class="metric"><strong>${d.olts.length}</strong><span>OLT-uri</span></div><div class="metric"><strong>${ports.toLocaleString('ro')}</strong><span>Porturi înregistrate</span></div></div>${ports||d.location?'<div class="map-toolbar"><button id="all-olts" class="secondary" type="button">Toate OLT-urile</button><button id="no-olts" class="secondary" type="button">Niciun OLT</button><button id="clear-down" class="secondary" type="button">Resetează DOWN</button><button id="blink-toggle" class="secondary" type="button" disabled>Stop blink</button></div><div class="map-legend"><span class="map-blue">Site</span><span class="map-green">DP normal</span><span class="map-red">DP cu port DOWN</span><span>DOWN marcat manual</span></div><div id="dp-map" aria-label="Harta DP-urilor OLT selectate"></div><p id="map-count" class="note" role="status">Bifează un OLT pentru a afișa DP-urile pe hartă.</p><p id="cable-status" class="note" role="status"></p><div class="port-tools"><input id="port-filter" type="search" aria-label="Filtrează porturile" placeholder="Filtrează OLT / placă / port"></div><div id="olt-list"></div><p class="note">DP-urile provin din splitterele SPL-1, cu aliasul din coloana B. „Referințe” reprezintă înregistrările Excel asociate portului. Porturile libere nu pot fi deduse din aceste date.</p>':'<p class="note">Acest site există în lista HTML, dar nu are conexiuni OLT asociate în coloana Q a Excelului.</p>'}`;
+ $('detail').innerHTML=`<span class="eyebrow">${d.code?'Site selectat':'OLT fără cod de site'}</span><h1 class="site-title">${esc(d.code||d.name)}</h1>${d.code?`<p class="site-name">${esc(d.name||'Denumire absentă din lista de site-uri')}</p>`:'<p class="site-name">Codul site-ului nu este identificabil din denumirea OLT-ului.</p>'}${d.code&&!d.location?'<p class="note">Coordonatele site-ului lipsesc din lista HTML.</p>':''}<div class="metrics"><div class="metric"><strong>${d.olts.length}</strong><span>OLT-uri</span></div><div class="metric"><strong>${ports.toLocaleString('ro')}</strong><span>Porturi înregistrate</span></div></div>${ports||d.location?'<div class="map-toolbar"><button id="all-olts" class="secondary" type="button">Toate OLT-urile</button><button id="no-olts" class="secondary" type="button">Niciun OLT</button><button id="clear-down" class="secondary" type="button">Resetează DOWN</button><button id="only-down" class="secondary" type="button" aria-pressed="false">Show only DOWN</button><button id="blink-toggle" class="secondary" type="button" disabled>Stop blink</button></div><div class="map-legend"><span class="map-blue">Site</span><span class="map-green">DP normal</span><span class="map-red">DP cu port DOWN</span><span>DOWN marcat manual</span></div><div id="dp-map" aria-label="Harta DP-urilor OLT selectate"></div><p id="map-count" class="note" role="status">Bifează un OLT pentru a afișa DP-urile pe hartă.</p><p id="cable-status" class="note" role="status"></p><div class="port-tools"><input id="port-filter" type="search" aria-label="Filtrează porturile" placeholder="Filtrează OLT / placă / port"></div><div id="olt-list"></div><p class="note">DP-urile provin din splitterele SPL-1, cu aliasul din coloana B. „Referințe” reprezintă înregistrările Excel asociate portului. Porturile libere nu pot fi deduse din aceste date.</p>':'<p class="note">Acest site există în lista HTML, dar nu are conexiuni OLT asociate în coloana Q a Excelului.</p>'}`;
  if(ports||d.location){
   initMap();renderPorts();$('port-filter').addEventListener('input',renderPorts);
   $('all-olts').addEventListener('click',()=>{selectedData.olts.forEach(o=>selectedOlts.add(o.name));renderPorts();renderMap(true)});
   $('no-olts').addEventListener('click',()=>{selectedOlts.clear();downPorts.clear();renderPorts();renderMap(false)});
   $('clear-down').addEventListener('click',()=>{downPorts.clear();renderPorts();renderMap(false)});
   $('blink-toggle').addEventListener('click',()=>{blinkEnabled=!blinkEnabled;updateBlink()});
+  $('only-down').addEventListener('click',()=>{onlyDown=!onlyDown;$('only-down').setAttribute('aria-pressed',String(onlyDown));$('only-down').classList.toggle('active',onlyDown);renderMap(false)});
   $('olt-list').addEventListener('change',onSelectionChange);
  }
 }
@@ -97,6 +98,7 @@ function renderMap(fit){
   }
  }
  for(const point of points.values()){
+  if(onlyDown&&!point.down)continue;
   const color=point.down?'#ef4444':'#22c55e';
   const marker=L.circleMarker([point.lat,point.lng],{radius:7,weight:2,color:'#07151e',fillColor:color,fillOpacity:.95,down:point.down}).addTo(dpMarkers);
   marker.bindPopup('<strong>DP / splitter nivel 1</strong><div class="dp-popup">'+Array.from(point.connections.values()).map(c=>`<div><strong>${esc(c.alias||'Alias lipsă')}</strong><br>${esc(c.olt)} / ${esc(c.port)}${c.down?' <b class="down-label">DOWN</b>':''}</div>`).join('')+'</div>'+locationLinks(point.lat,point.lng),{maxWidth:360});
@@ -106,7 +108,7 @@ function renderMap(fit){
  }
  if(fit&&points.size){const extent=Array.from(points.values()).map(p=>[p.lat,p.lng]);if(selectedData.location)extent.push(selectedData.location);dpMap.fitBounds(L.latLngBounds(extent),{padding:[30,30],maxZoom:16})}
  siteMarker?.bringToFront();
- $('map-count').textContent=selectedOlts.size?`${points.size} DP pe hartă · ${redMarkers.length} DOWN${missing?' · '+missing+' porturi fără DP SPL-1 cu coordonate':''}${downMissing?' ('+downMissing+' marcate DOWN)':''}`:'Bifează un OLT pentru a afișa DP-urile pe hartă.';
+ $('map-count').textContent=selectedOlts.size?`${onlyDown?redMarkers.length:points.size} DP pe hartă · ${redMarkers.length} DOWN${missing?' · '+missing+' porturi fără DP SPL-1 cu coordonate':''}${downMissing?' ('+downMissing+' marcate DOWN)':''}`:'Bifează un OLT pentru a afișa DP-urile pe hartă.';
  updateBlink();
 }
 async function refreshCables(){

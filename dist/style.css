@@ -7,3 +7,5 @@
 .map-blue{display:flex;align-items:center;gap:6px}.map-blue::before{content:'';width:9px;height:9px;border-radius:50%;background:#2388ff}.dp-number-label{font-size:11px;font-weight:750;color:#173c26;background:#f2fff5;border:1px solid #208746;padding:2px 5px;border-radius:4px;box-shadow:0 1px 4px #0004}.dp-number-down{color:#aa2020;background:#fff2f2;border-color:#ef4444}.site-code-label{font-size:11px;font-weight:800;color:#1261c2;background:#f2f8ff;border:1px solid #2388ff;padding:3px 6px}#cable-status{font-size:11px;margin:6px 0;color:var(--muted)}
 
 .location-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.location-links a{display:inline-block;padding:7px 10px;border-radius:6px;background:#1261c2;color:#fff!important;text-decoration:none;font-size:12px;font-weight:700}
+
+.map-toolbar .secondary.active{background:#8d252c;border-color:#ef4444;color:#fff}
