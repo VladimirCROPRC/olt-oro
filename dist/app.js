@@ -1,5 +1,5 @@
 'use strict';
-const DATA_VERSION='20261005-4';
+const DATA_VERSION='20261005-5';
 const $=id=>document.getElementById(id),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let index=[],mode='sites',selected=null,selectedData=null,request=0;
 let selectedOlts=new Set(),downPorts=new Set(),dpMap=null,dpMarkers=null,blinkTimer=null,blinkEnabled=true,redMarkers=[];
@@ -127,7 +127,7 @@ async function refreshCables(){
    const data=item.shard.file.endsWith('.gz')?JSON.parse(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text()):await response.json();
    if(run!==cableRun||map!==dpMap)return;
    const features=data.c?data.c.map((c,j)=>({type:'Feature',id:String(j),properties:c[0],geometry:{type:c[2]?'MultiLineString':'LineString',coordinates:c[1]}})):data.features;
-   const geo=L.geoJSON({type:'FeatureCollection',features},{interactive:false,style:f=>({interactive:false,color:f.properties._color||({b:'#0000ff',g:'#00ff00',r:'#ff0000',c:'#35d6ff'})[f.properties._c]||item.layer.color,weight:2.5,opacity:f.properties._opacity??.9})});
+   const geo=L.geoJSON({type:'FeatureCollection',features},{onEachFeature:(f,l)=>{l._clickTolerance=function(){return L.Polyline.prototype._clickTolerance.call(this)+(L.Browser.touch?14:6)};l.on("click",e=>{l._cableClickedAt=e.latlng});l.bindPopup(()=>cablePopup(f)+(l._cableClickedAt?locationLinks(l._cableClickedAt.lat,l._cableClickedAt.lng):""),{className:"cable-popup",maxWidth:430})},style:f=>({color:f.properties._color||({b:'#0000ff',g:'#00ff00',r:'#ff0000',c:'#35d6ff'})[f.properties._c]||item.layer.color,weight:2.5,opacity:f.properties._opacity??.9})});
    const group=groups.get(item.layer.id);geo.addTo(group);geo.eachLayer(l=>l.bringToBack());cableVisible.set(item.key,{group,geo});
   }}
   await Promise.all(Array.from({length:Math.min(4,wanted.length)},worker));

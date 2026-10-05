@@ -32,3 +32,5 @@ Review `import-report.json`, then commit the updated `dist` data. The deployment
 ```sh
 python -m http.server 8080 --directory dist
 ```
+
+Cable taps show owner, status, route type, both endpoint structures and cable attributes, with Google Maps and Street View links for the tapped position. A shared Canvas renderer keeps point popups working when FO layers are toggled; cables have enlarged touch targets.
