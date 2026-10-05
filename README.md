@@ -34,3 +34,5 @@ python -m http.server 8080 --directory dist
 ```
 
 Cable taps show owner, status, route type, both endpoint structures and cable attributes, with Google Maps and Street View links for the tapped position. A shared Canvas renderer keeps point popups working when FO layers are toggled; cables have enlarged touch targets.
+
+The OLT and DOWN port controls are in the left panel. The map ruler measures the summed geodesic distances between tapped points. Undo removes the last point, Clear resets the ruler, and Escape exits measurement mode. Measurements reset when selecting another site.
