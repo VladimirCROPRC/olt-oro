@@ -155,9 +155,8 @@ $('results').addEventListener('click',e=>{const b=e.target.closest('[data-id]');
 function changeMode(value){mode=value;$('sites-tab').classList.toggle('selected',mode==='sites');$('unknown-tab').classList.toggle('selected',mode==='unknown');renderResults()}
 $('sites-tab').addEventListener('click',()=>changeMode('sites'));
 $('unknown-tab').addEventListener('click',()=>changeMode('unknown'));
-$('example').addEventListener('click',()=>{const s=index.find(s=>s.code==='CL0400');if(s){$('search').value='CL0400';changeMode('sites');selectSite(s)}});
 fetch('index.json?v='+DATA_VERSION,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{
- index=data.sites;renderResults();$('example').disabled=false;const hash=decodeURIComponent(location.hash.slice(1));const s=hash?index.find(s=>s.code===hash||s.name===hash):null;
+ index=data.sites;renderResults();const hash=decodeURIComponent(location.hash.slice(1));const s=hash?index.find(s=>s.code===hash||s.name===hash):null;
  if(s){$('search').value=s.code||s.name;changeMode(s.code?'sites':'unknown');selectSite(s)}
 }).catch(()=>$('search-count').textContent='Datele nu au putut fi încărcate. Reîncarcă pagina.');
 
