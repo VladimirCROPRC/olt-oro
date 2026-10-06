@@ -1,5 +1,5 @@
 'use strict';
-const DATA_VERSION='20261006-4';
+const DATA_VERSION='20261006-6';
 let fiberAlarms=[];
 function selectAlarmOlts(){if(!selectedData)return;for(const olt of selectedData.olts){if(olt.ports.some(p=>alarmsForPort(olt.name,p.port).length))selectedOlts.add(olt.name)}}
 function alarmsForPort(olt,port){const bits=port.replace(/^Sl\.\s*/i,'').split('/').map(x=>/^\d+$/.test(x)?String(Number(x)):x);return fiberAlarms.filter(a=>a.olt.trim().toUpperCase()===olt.trim().toUpperCase()&&(bits.length===2?a.frame==='0'&&bits[0]===a.slot&&bits[1]===a.port:bits.length===3&&bits[0]===a.frame&&bits[1]===a.slot&&bits[2]===a.port))}

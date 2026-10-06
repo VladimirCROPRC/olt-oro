@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "OLT ORO — NCE alarm agent",
+  "version": "0.1.0",
+  "description": "Citește alarmele NCE după autentificare manuală și le transmite numai pe acest PC.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://nce-fan-bi0514.infra.orange.intra:31943/*", "http://127.0.0.1:8765/*"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_popup": "popup.html"},
+  "content_scripts": [
+    {"matches": ["https://nce-fan-bi0514.infra.orange.intra:31943/*"], "js": ["capture.js"], "run_at": "document_start", "world": "MAIN", "all_frames": true},
+    {"matches": ["https://nce-fan-bi0514.infra.orange.intra:31943/*"], "js": ["bridge.js"], "run_at": "document_start", "all_frames": true}
+  ]
+}

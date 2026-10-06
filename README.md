@@ -49,3 +49,10 @@ Verificarea TLS este activă implicit. O excepție explicită numai pentru NCE s
 Importul inițial din HAR reprezintă numai ultima pagină capturată și este etichetat LISTĂ PARȚIALĂ. Preluarea citește jobul curent cu comanda 1103, în pagini de 55, maximum 200 pagini per apăsare. Limita este explicită; totalul citit și totalul raportat de NCE sunt afișate. Filtrul jobului este cel din NCE. Pentru volum mic, selectați în NCE doar LOS/LOSi/LOBi înainte de captură. Semantica paginării multi-page trebuie confirmată pe serviciul real; schimbarea totalului în timpul citirii anulează actualizarea. Nu avem încă autentificare API independentă sau filtrare server-side verificată.
 
 Sunt păstrate numai alarmele active (`cleared=0`) cu ID 772907009 și 772874247. LOS de alimentare marchează automat DOWN; LOSi/LOBi afișează numărul de ONT afectate în lista porturilor, fără a considera întregul port DOWN. Asocierea folosește numele exact al OLT-ului, fără diferențiere majuscule/minuscule, și Slot/Port (Frame=0 pentru porturi cu două componente). Numele diferite între NCE și Excel nu sunt ghicite. Selecțiile DOWN manuale se păstrează separat.
+
+
+## Agent browser, fără export HAR
+
+Rulați `./Start-Alarme.ps1` fără parametri pentru pornire în modul agent. Instalați manual extensia din `nce-agent` în Edge/Chrome (Developer mode, Load unpacked). Pachetul ZIP și pașii sunt disponibili la http://127.0.0.1:8765/agent.html. Reîncărcați tabul NCE după instalare, autentificați-vă manual, deschideți filtrul de fibră Current Alarms și porniți agentul din popup. Browserul și serviciul trebuie să fie pe același PC.
+
+Actualizare la 30 secunde din tabul NCE selectat; OLT ORO verifică snapshotul la 3 secunde. Extensia nu exportă cookie-uri sau parole; numai câmpurile alarmelor de fibră sunt transmise loopback. Opțiunea de excepție TLS a cititorului Python nu este necesară în acest mod. Browserul gestionează conexiunea și autentificarea NCE. Instalarea în browserul real și testul NCE sunt pași manuali necesari. Logica de citire, filtrare și transmitere a fost verificată cu răspunsuri simulate; acestea nu confirmă compatibilitatea finală cu NCE.

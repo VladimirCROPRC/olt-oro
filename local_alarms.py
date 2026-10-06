@@ -16,6 +16,9 @@ from pathlib import Path
 FIBER_IDS = {'772907009', '772874247'}
 NCE_HOST = 'nce-fan-bi0514.infra.orange.intra'
 
+class MissingSession(ValueError):
+    pass
+
 class NceHTTPSHandler(urllib.request.HTTPSHandler):
     def https_open(self, request):
         url = urllib.parse.urlsplit(request.full_url)
@@ -56,6 +59,13 @@ def normalize(records):
 
 class Reader:
     def __init__(self, har, ca=None, allow_unverified_nce=False):
+        if har is None:
+            self.ca = ca
+            self.unverified_nce = False
+            self.session_auth_present = False
+            self.lock = threading.Lock()
+            self.snapshot = dict(alarms=[], source='Agent browser — așteaptă NCE', complete=False, read=0, total=0)
+            return
         document = har if isinstance(har, dict) else json.loads(Path(har).read_text(encoding='utf-8-sig'))
         entries = document['log']['entries']
         self.ca = ca
@@ -78,6 +88,7 @@ class Reader:
         permitted = {'cookie', 'authorization', 'roarand', 'x-requested-with', 'origin', 'referer', 'x-csrf-token', 'x-xsrf-token'}
         self.headers = {h['name']: h['value'] for h in request['headers'] if h['name'].lower() in permitted}
         self.headers['Content-Type'] = 'application/json'
+        self.session_auth_present = any(value for name, value in self.headers.items() if name.lower() in ('cookie', 'authorization'))
         self.context = ssl.create_default_context(cafile=ca)
         self.unverified_nce = allow_unverified_nce
         if allow_unverified_nce:
@@ -96,6 +107,8 @@ class Reader:
             pass
 
     def sync(self, max_pages=200):
+        if not self.session_auth_present:
+            raise MissingSession('HAR-ul nu conține sesiunea de autentificare. Exportă HAR with sensitive data și încarcă-l numai în aplicația locală.')
         if not self.lock.acquire(blocking=False):
             raise ValueError('O preluare este deja în curs.')
         try:
@@ -158,15 +171,36 @@ def serve(reader, port=8765):
             if not self.trusted():
                 return self.send_json({'error': 'Host invalid'}, 403)
             if self.path == '/api/alarms':
-                return self.send_json(dict(reader.snapshot, token=token, unverifiedNce=reader.unverified_nce))
+                return self.send_json(dict(reader.snapshot, token=token, unverifiedNce=reader.unverified_nce, sessionAuthPresent=reader.session_auth_present))
             if self.path.startswith('/api/'):
                 return self.send_json({'error': 'Not found'}, 404)
             super().do_GET()
 
         def do_POST(self):
             nonlocal reader
-            if not self.trusted() or self.headers.get('Origin') != f'http://127.0.0.1:{port}' or self.headers.get('X-Local-Token') != token:
+            origin = self.headers.get('Origin', '')
+            extension_request = self.path == '/api/alarms/browser' and (re.fullmatch(r'chrome-extension://[a-p]{32}', origin) or not origin) and self.headers.get('X-Browser-Agent') == 'OLT-ORO'
+            if not self.trusted() or not (origin == f'http://127.0.0.1:{port}' or extension_request) or self.headers.get('X-Local-Token') != token:
                 return self.send_json({'error': 'Request rejected'}, 403)
+            if self.path == '/api/alarms/browser':
+                try:
+                    length = int(self.headers.get('Content-Length', '0'))
+                    if length <= 0 or length > 8 * 1024 * 1024:
+                        return self.send_json({'error': 'Date agent prea mari.'}, 400)
+                    data = json.loads(self.rfile.read(length))
+                    rows = data['records']
+                    if not isinstance(rows, list) or len(rows) > 20000 or not all(isinstance(row, dict) for row in rows):
+                        raise ValueError()
+                    total = int(data['total'])
+                    read = int(data['read'])
+                    if read < 0 or total < 0 or read > 20000:
+                        raise ValueError()
+                    reader.snapshot = dict(alarms=normalize(rows), source='Agent browser NCE',
+                                           complete=bool(data.get('complete')) and read >= total,
+                                           read=read, total=total, updated=datetime.now(timezone.utc).isoformat())
+                    return self.send_json({'accepted': True, 'alarms': len(reader.snapshot['alarms'])})
+                except (ValueError, KeyError, TypeError):
+                    return self.send_json({'error': 'Date agent invalide.'}, 400)
             if self.path == '/api/session':
                 if reader.lock.locked():
                     return self.send_json({'error': 'Așteaptă finalizarea preluării curente.'}, 409)
@@ -177,13 +211,15 @@ def serve(reader, port=8765):
                     document = json.loads(self.rfile.read(length).decode('utf-8-sig'))
                     replacement = Reader(document, reader.ca, reader.unverified_nce)
                     reader = replacement
-                    return self.send_json(dict(reader.snapshot, unverifiedNce=reader.unverified_nce))
+                    return self.send_json(dict(reader.snapshot, unverifiedNce=reader.unverified_nce, sessionAuthPresent=reader.session_auth_present))
                 except (ValueError, KeyError, TypeError):
                     return self.send_json({'error': 'HAR invalid sau fără cererea NCE 1103. Sesiunea anterioară este păstrată.'}, 400)
             if self.path != '/api/alarms/sync':
                 return self.send_json({'error': 'Not found'}, 404)
             try:
                 self.send_json(reader.sync())
+            except MissingSession as error:
+                self.send_json({'error': str(error)}, 400)
             except urllib.error.HTTPError as error:
                 message = 'Sesiunea NCE a expirat sau accesul este refuzat. Selectează un HAR nou.' if error.code in (301, 302, 303, 307, 308, 401, 403) else 'Serverul NCE nu a acceptat cererea de alarme.'
                 self.send_json({'error': message}, 502)
@@ -204,7 +240,7 @@ def serve(reader, port=8765):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--har', required=True, help='HAR local cu sesiunea NCE curentă')
+    parser.add_argument('--har', help='HAR local opțional; fără HAR se folosește agentul browser')
     parser.add_argument('--ca', help='Certificat CA intern PEM, dacă nu este acceptat implicit')
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--allow-unverified-nce', action='store_true', help='Excepție TLS numai pentru serverul NCE, fără redirecturi')
