@@ -22,3 +22,5 @@
 @media(max-width:800px){.detail .map-toolbar .secondary{min-height:30px;padding:5px 7px}}
 
 .brand{font-family:"Segoe UI",Arial,sans-serif;font-size:21px;font-weight:600;letter-spacing:.15px;gap:10px}.brand-icon{font-family:"Segoe UI",Arial,sans-serif;font-size:20px;font-weight:600}.top-label{font-family:"Segoe UI",Arial,sans-serif;font-size:12px;font-weight:400;letter-spacing:.1px}
+
+.map-layer-panel{margin:14px 0 10px;padding:10px 12px;background:#101f29;border:1px solid var(--line);border-radius:9px}.map-layer-panel h2{margin:0 0 5px;color:var(--muted);font-size:11px;font-weight:600}.map-layer-panel .leaflet-control-layers{float:none;margin:0;padding:0;width:100%;background:transparent;border:0;box-shadow:none;color:var(--text);font-size:12px}.map-layer-panel .leaflet-control-layers label{padding:4px 0;cursor:pointer}.map-layer-panel .leaflet-control-layers-separator{border-color:var(--line);margin:5px 0}.map-layer-panel input{width:auto;padding:0;accent-color:var(--accent)}

@@ -1,5 +1,5 @@
 'use strict';
-const DATA_VERSION='20261005-9';
+const DATA_VERSION='20261006-1';
 const $=id=>document.getElementById(id),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let index=[],mode='sites',selected=null,selectedData=null,request=0;
 let selectedOlts=new Set(),downPorts=new Set(),dpMap=null,dpMarkers=null,blinkTimer=null,blinkEnabled=true,redMarkers=[],onlyDown=false;
@@ -76,7 +76,9 @@ function initMap(){
  const streets=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxNativeZoom:19,maxZoom:20,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(dpMap);
  const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,attribution:'Imagery © Esri'});
  cableGroups=new Map([['fo-orange',L.layerGroup().addTo(dpMap)],['fo-oroc',L.layerGroup()]]);
- L.control.layers({'OpenStreetMap':streets,'ESRI Satellite':satellite},{'FO Orange':cableGroups.get('fo-orange'),'FO OROC':cableGroups.get('fo-oroc')},{collapsed:false}).addTo(dpMap);
+ const layerControl=L.control.layers({'OpenStreetMap':streets,'ESRI Satellite':satellite},{'FO Orange':cableGroups.get('fo-orange'),'FO OROC':cableGroups.get('fo-oroc')},{collapsed:false}).addTo(dpMap);
+ const selector=document.createElement('section');selector.className='map-layer-panel';selector.setAttribute('aria-label','Map style and cable layers');
+ selector.innerHTML='<h2>Stil hartă și cabluri</h2>';selector.append(layerControl.getContainer());$('port-panel').prepend(selector);
  L.control.scale({imperial:false}).addTo(dpMap);dpMarkers=L.layerGroup().addTo(dpMap);
  if(selectedData.location){
   siteMarker=L.circleMarker(selectedData.location,{radius:9,color:'#f4faff',weight:2,fillColor:'#2388ff',fillOpacity:1}).addTo(dpMap);
