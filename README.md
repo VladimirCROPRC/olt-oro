@@ -36,3 +36,16 @@ python -m http.server 8080 --directory dist
 Cable taps show owner, status, route type, both endpoint structures and cable attributes, with Google Maps and Street View links for the tapped position. A shared Canvas renderer keeps point popups working when FO layers are toggled; cables have enlarged touch targets.
 
 The OLT and DOWN port controls are in the left panel. The map ruler measures the summed geodesic distances between tapped points. Undo removes the last point, Clear resets the ruler, and Escape exits measurement mode. Measurements reset when selecting another site.
+
+
+## Alarme NCE prin serviciul local
+
+Rulați `./Start-Alarme.ps1` în PowerShell și selectați un HAR recent din NCE. Cu WireGuard conectat, deschideți http://127.0.0.1:8765/ și apăsați **Preia alarme fibra**. Închiderea consolei oprește serviciul. Aplicația locală include aceleași date și harta ca aplicația publică. Python 3 este necesar; nu sunt necesare pachete suplimentare.
+
+HAR-ul rămâne local și poate conține cookie-uri de autentificare. Nu îl încărcați în repository și nu distribuiți sesiunea. Parola nu este folosită sau salvată. După expirarea sesiunii, selectați un HAR nou. Serviciul ascultă doar pe 127.0.0.1 și nu oferă CORS pentru alte site-uri.
+
+Verificarea TLS este obligatorie. Dacă certificatul NCE nu este acceptat, solicitați CA-ul intern în format PEM administratorului și porniți `./Start-Alarme.ps1 -Ca C:/cale/ca-intern.pem`. Nu dezactivați verificarea certificatului.
+
+Importul inițial din HAR reprezintă numai ultima pagină capturată și este etichetat LISTĂ PARȚIALĂ. Preluarea citește jobul curent cu comanda 1103, în pagini de 55, maximum 200 pagini per apăsare. Limita este explicită; totalul citit și totalul raportat de NCE sunt afișate. Filtrul jobului este cel din NCE. Pentru volum mic, selectați în NCE doar LOS/LOSi/LOBi înainte de captură. Semantica paginării multi-page trebuie confirmată pe serviciul real; schimbarea totalului în timpul citirii anulează actualizarea. Nu avem încă autentificare API independentă sau filtrare server-side verificată.
+
+Sunt păstrate numai alarmele active (`cleared=0`) cu ID 772907009 și 772874247. LOS de alimentare marchează automat DOWN; LOSi/LOBi afișează numărul de ONT afectate în lista porturilor, fără a considera întregul port DOWN. Asocierea folosește numele exact al OLT-ului, fără diferențiere majuscule/minuscule, și Slot/Port (Frame=0 pentru porturi cu două componente). Numele diferite între NCE și Excel nu sunt ghicite. Selecțiile DOWN manuale se păstrează separat.
