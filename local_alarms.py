@@ -42,7 +42,7 @@ def normalize(records):
     alarms = {}
     for row in records:
         aid = str(row.get('alarmId', ''))
-        if aid not in FIBER_IDS or str(row.get('cleared')) != '0':
+        if aid not in FIBER_IDS:
             continue
         location = row.get('moi') or ''
         values = dict(re.findall(r'\b(Frame|Slot|Port|ONUID)\b\s*=\s*(\d+)', location, re.I))
@@ -52,7 +52,8 @@ def normalize(records):
         item = dict(id=aid, olt=row.get('meName', ''), frame=values['frame'],
                     slot=values['slot'], port=values['port'], onu=values.get('onuid'),
                     kind='LOS' if aid == '772907009' else 'ONT',
-                    name=row.get('alarmName', ''), occurred=row.get('latestOccurUtc'))
+                    name=row.get('alarmName', ''), occurred=row.get('latestOccurUtc'),
+                    cleared=str(row.get('cleared')) == '1', clearedOn=row.get('clearUtc'))
         key = str(row.get('csn') or json.dumps(item, sort_keys=True))
         alarms[key] = item
     return list(alarms.values())

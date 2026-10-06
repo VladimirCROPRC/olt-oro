@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "OLT ORO — NCE alarm agent",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Citește alarmele NCE după autentificare manuală și le transmite numai pe acest PC.",
   "permissions": [
     "storage"

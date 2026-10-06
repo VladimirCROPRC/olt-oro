@@ -26,3 +26,5 @@
 .map-layer-panel{margin:14px 0 10px;padding:10px 12px;background:#101f29;border:1px solid var(--line);border-radius:9px}.map-layer-panel h2{margin:0 0 5px;color:var(--muted);font-size:11px;font-weight:600}.map-layer-panel .leaflet-control-layers{float:none;margin:0;padding:0;width:100%;background:transparent;border:0;box-shadow:none;color:var(--text);font-size:12px}.map-layer-panel .leaflet-control-layers label{padding:4px 0;cursor:pointer}.map-layer-panel .leaflet-control-layers-separator{border-color:var(--line);margin:5px 0}.map-layer-panel input{width:auto;padding:0;accent-color:var(--accent)}
 
 .alarm-panel{padding:8px 0;display:flex;flex-wrap:wrap;gap:5px}.alarm-panel p{width:100%;font-size:11px;line-height:1.4;margin:3px 0;color:#b8cad4}.ont-alarm{color:#ffc04a;margin-left:4px;white-space:nowrap}
+
+.alarm-date{font-size:10px;line-height:1.4;white-space:normal;min-width:72px}

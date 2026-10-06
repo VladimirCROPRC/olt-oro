@@ -9,7 +9,7 @@ function acceptAlarmSnapshot(data){
  oltAlarmAliases=data.oltAliases||{};
  fiberAlarms=data.alarms||[];
  const browserAgent=data.source.startsWith('Agent browser');$('sync-alarms').disabled=browserAgent;$('sync-alarms').textContent=browserAgent?'Agent: actualizare automată':'Preia alarme fibra';
- const los=fiberAlarms.filter(a=>a.kind==='LOS').length,ont=fiberAlarms.length-los;
+ const los=fiberAlarms.filter(a=>a.kind==='LOS'&&!a.cleared).length,ont=fiberAlarms.filter(a=>a.kind==='ONT'&&!a.cleared).length;
  $('alarm-status').textContent=`${data.source}: ${los} LOS · ${ont} ONT · ${data.read}/${data.total} înregistrări${data.complete?'':' · LISTĂ PARȚIALĂ'}${data.updated?' · '+new Date(data.updated).toLocaleString('ro'):''}${data.unverifiedNce?' · Excepție certificat NCE activă':''}${data.sessionAuthPresent===false&&data.source.startsWith('HAR')?' · HAR fără autentificare: exportă with sensitive data':''}`;
  if(selectedData&&dpMap){const previous=selectedOlts.size;selectAlarmOlts();renderPorts();renderMap(selectedOlts.size!==previous)}
 }

@@ -54,7 +54,7 @@
    }
    if(!enabled||run!==generation)return;
    // Only operational fiber fields leave this tab. Cookies and request payload stay here.
-   const records=rows.filter(row=>['772907009','772874247'].includes(String(row.alarmId))&&String(row.cleared)==='0').map(row=>({csn:row.csn,alarmId:row.alarmId,cleared:row.cleared,meName:row.meName,moi:row.moi,alarmName:row.alarmName,latestOccurUtc:row.latestOccurUtc}));
+   const records=rows.filter(row=>['772907009','772874247'].includes(String(row.alarmId))).map(row=>({csn:row.csn,alarmId:row.alarmId,cleared:row.cleared,meName:row.meName,moi:row.moi,alarmName:row.alarmName,latestOccurUtc:row.latestOccurUtc,clearUtc:row.clearUtc}));
    emit('SNAPSHOT',{records,total,read:rows.length,complete});
   }catch(error){const reason=error.name==='AbortError'?'NCE nu a răspuns în 30 s.':error.name==='TypeError'?'Conexiunea browserului către NCE a eșuat.':error.name==='SyntaxError'?'Răspunsul NCE nu este JSON.':error.message;emit('STATUS',{message:stage+': '+reason+' Datele anterioare sunt păstrate; reîncercare în 30 s.'})}
   finally{busy=false}
