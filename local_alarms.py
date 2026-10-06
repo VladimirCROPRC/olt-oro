@@ -56,7 +56,9 @@ def normalize(records):
 
 class Reader:
     def __init__(self, har, ca=None, allow_unverified_nce=False):
-        entries = json.loads(Path(har).read_text(encoding='utf-8-sig'))['log']['entries']
+        document = har if isinstance(har, dict) else json.loads(Path(har).read_text(encoding='utf-8-sig'))
+        entries = document['log']['entries']
+        self.ca = ca
         candidates = []
         for entry in entries:
             request = entry['request']
@@ -162,8 +164,22 @@ def serve(reader, port=8765):
             super().do_GET()
 
         def do_POST(self):
+            nonlocal reader
             if not self.trusted() or self.headers.get('Origin') != f'http://127.0.0.1:{port}' or self.headers.get('X-Local-Token') != token:
                 return self.send_json({'error': 'Request rejected'}, 403)
+            if self.path == '/api/session':
+                if reader.lock.locked():
+                    return self.send_json({'error': 'Așteaptă finalizarea preluării curente.'}, 409)
+                try:
+                    length = int(self.headers.get('Content-Length', '0'))
+                    if length <= 0 or length > 64 * 1024 * 1024:
+                        return self.send_json({'error': 'Selectează un HAR de maximum 64 MB.'}, 400)
+                    document = json.loads(self.rfile.read(length).decode('utf-8-sig'))
+                    replacement = Reader(document, reader.ca, reader.unverified_nce)
+                    reader = replacement
+                    return self.send_json(dict(reader.snapshot, unverifiedNce=reader.unverified_nce))
+                except (ValueError, KeyError, TypeError):
+                    return self.send_json({'error': 'HAR invalid sau fără cererea NCE 1103. Sesiunea anterioară este păstrată.'}, 400)
             if self.path != '/api/alarms/sync':
                 return self.send_json({'error': 'Not found'}, 404)
             try:

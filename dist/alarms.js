@@ -1,7 +1,7 @@
 'use strict';
 const localAlarms=location.hostname==='127.0.0.1';
 const alarmPanel=document.createElement('section');alarmPanel.className='alarm-panel';
-alarmPanel.innerHTML=localAlarms?'<button id="sync-alarms" class="secondary" type="button">Preia alarme fibra</button><button id="show-alarm-olts" class="secondary" type="button">Arată OLT cu alarme</button><p id="alarm-status" role="status">Se citește captura locală…</p>':'<a class="secondary" href="http://127.0.0.1:8765/" target="_blank" rel="noopener">Alarme prin serviciul local ↗</a>';
+alarmPanel.innerHTML=localAlarms?'<button id="load-nce-session" class="secondary" type="button">Încarcă sesiune HAR</button><input id="nce-har-file" type="file" accept=".har,application/json" hidden><button id="sync-alarms" class="secondary" type="button">Preia alarme fibra</button><button id="show-alarm-olts" class="secondary" type="button">Arată OLT cu alarme</button><p id="alarm-status" role="status">Se citește captura locală…</p>':'<a class="secondary" href="http://127.0.0.1:8765/" target="_blank" rel="noopener">Alarme prin serviciul local ↗</a>';
 document.querySelector('.sidebar').insertBefore(alarmPanel,$('port-panel'));
 let localAlarmToken=null;
 function acceptAlarmSnapshot(data){
@@ -12,6 +12,17 @@ function acceptAlarmSnapshot(data){
 }
 if(localAlarms){
  fetch('/api/alarms',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{localAlarmToken=data.token;acceptAlarmSnapshot(data)}).catch(()=>$('alarm-status').textContent='Serviciul local nu este disponibil.');
+ $('load-nce-session').addEventListener('click',()=>$('nce-har-file').click());
+ $('nce-har-file').addEventListener('change',async event=>{
+  const file=event.target.files[0];if(!file||!localAlarmToken)return;
+  if(file.size>64*1024*1024){$('alarm-status').textContent='Selectează un HAR de maximum 64 MB.';event.target.value='';return}
+  const button=$('load-nce-session');button.disabled=true;
+  try{
+   const response=await fetch('/api/session',{method:'POST',headers:{'X-Local-Token':localAlarmToken},body:file});
+   const data=await response.json();if(!response.ok)throw Error(data.error||'HAR invalid.');acceptAlarmSnapshot(data);
+  }catch(error){$('alarm-status').textContent=error.message}
+  finally{button.disabled=false;event.target.value=''}
+ });
  $('sync-alarms').addEventListener('click',async()=>{
   if(!localAlarmToken)return;
   const button=$('sync-alarms');button.disabled=true;$('alarm-status').textContent='Se preiau alarmele din NCE…';
