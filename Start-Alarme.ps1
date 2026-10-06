@@ -1,4 +1,4 @@
-param([string]$Har, [string]$Ca)
+param([string]$Har, [string]$Ca, [switch]$AllowUnverifiedNce)
 $ErrorActionPreference = 'Stop'
 if (-not $Har) {
     Add-Type -AssemblyName System.Windows.Forms
@@ -15,5 +15,6 @@ elseif ($pythonCommand) { $pythonPath = $pythonCommand.Source }
 else { throw 'Python 3 nu este instalat.' }
 $scriptArguments = @((Join-Path $PSScriptRoot 'local_alarms.py'), '--har', $Har)
 if ($Ca) { $scriptArguments += @('--ca', $Ca) }
+if ($AllowUnverifiedNce) { $scriptArguments += '--allow-unverified-nce' }
 Write-Host 'Deschide http://127.0.0.1:8765/ dupa mesajul OLT ORO local.'
 & $pythonPath @scriptArguments

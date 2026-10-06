@@ -44,7 +44,7 @@ Rulați `./Start-Alarme.ps1` în PowerShell și selectați un HAR recent din NCE
 
 HAR-ul rămâne local și poate conține cookie-uri de autentificare. Nu îl încărcați în repository și nu distribuiți sesiunea. Parola nu este folosită sau salvată. După expirarea sesiunii, selectați un HAR nou. Serviciul ascultă doar pe 127.0.0.1 și nu oferă CORS pentru alte site-uri.
 
-Verificarea TLS este obligatorie. Dacă certificatul NCE nu este acceptat, solicitați CA-ul intern în format PEM administratorului și porniți `./Start-Alarme.ps1 -Ca C:/cale/ca-intern.pem`. Nu dezactivați verificarea certificatului.
+Verificarea TLS este activă implicit. O excepție explicită numai pentru NCE se poate activa cu `./Start-Alarme.ps1 -AllowUnverifiedNce`; redirecturile sunt refuzate, iar alte destinații HTTPS sunt respinse de cititor. Dacă certificatul NCE nu este acceptat, solicitați CA-ul intern în format PEM administratorului și porniți `./Start-Alarme.ps1 -Ca C:/cale/ca-intern.pem`. Nu dezactivați verificarea certificatului.
 
 Importul inițial din HAR reprezintă numai ultima pagină capturată și este etichetat LISTĂ PARȚIALĂ. Preluarea citește jobul curent cu comanda 1103, în pagini de 55, maximum 200 pagini per apăsare. Limita este explicită; totalul citit și totalul raportat de NCE sunt afișate. Filtrul jobului este cel din NCE. Pentru volum mic, selectați în NCE doar LOS/LOSi/LOBi înainte de captură. Semantica paginării multi-page trebuie confirmată pe serviciul real; schimbarea totalului în timpul citirii anulează actualizarea. Nu avem încă autentificare API independentă sau filtrare server-side verificată.
 

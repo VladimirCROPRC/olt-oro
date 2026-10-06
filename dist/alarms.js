@@ -7,7 +7,7 @@ let localAlarmToken=null;
 function acceptAlarmSnapshot(data){
  fiberAlarms=data.alarms||[];
  const los=fiberAlarms.filter(a=>a.kind==='LOS').length,ont=fiberAlarms.length-los;
- $('alarm-status').textContent=`${data.source}: ${los} LOS · ${ont} ONT · ${data.read}/${data.total} înregistrări${data.complete?'':' · LISTĂ PARȚIALĂ'}${data.updated?' · '+new Date(data.updated).toLocaleString('ro'):''}`;
+ $('alarm-status').textContent=`${data.source}: ${los} LOS · ${ont} ONT · ${data.read}/${data.total} înregistrări${data.complete?'':' · LISTĂ PARȚIALĂ'}${data.updated?' · '+new Date(data.updated).toLocaleString('ro'):''}${data.unverifiedNce?' · Excepție certificat NCE activă':''}`;
  if(selectedData&&dpMap){renderPorts();renderMap(false)}
 }
 if(localAlarms){

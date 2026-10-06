@@ -16,6 +16,18 @@ from pathlib import Path
 FIBER_IDS = {'772907009', '772874247'}
 NCE_HOST = 'nce-fan-bi0514.infra.orange.intra'
 
+class NceHTTPSHandler(urllib.request.HTTPSHandler):
+    def https_open(self, request):
+        url = urllib.parse.urlsplit(request.full_url)
+        if url.hostname != NCE_HOST or url.port != 31943 or url.scheme != 'https':
+            raise ValueError('Destinația nu este serverul NCE autorizat.')
+        return super().https_open(request)
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, fp, code, msg, headers, newurl):
+        # Never forward the NCE session to another destination.
+        return None
+
 def decode_response(entry):
     content = entry['response']['content']
     text = content.get('text', '')
@@ -30,7 +42,7 @@ def normalize(records):
         if aid not in FIBER_IDS or str(row.get('cleared')) != '0':
             continue
         location = row.get('moi') or ''
-        values = dict(re.findall(r'(Frame|Slot|Port|ONUID)\s*=\s*(\d+)', location, re.I))
+        values = dict(re.findall(r'\b(Frame|Slot|Port|ONUID)\b\s*=\s*(\d+)', location, re.I))
         values = {k.lower(): v for k, v in values.items()}
         if not all(k in values for k in ['frame', 'slot', 'port']):
             continue
@@ -43,7 +55,7 @@ def normalize(records):
     return list(alarms.values())
 
 class Reader:
-    def __init__(self, har, ca=None):
+    def __init__(self, har, ca=None, allow_unverified_nce=False):
         entries = json.loads(Path(har).read_text(encoding='utf-8-sig'))['log']['entries']
         candidates = []
         for entry in entries:
@@ -65,6 +77,11 @@ class Reader:
         self.headers = {h['name']: h['value'] for h in request['headers'] if h['name'].lower() in permitted}
         self.headers['Content-Type'] = 'application/json'
         self.context = ssl.create_default_context(cafile=ca)
+        self.unverified_nce = allow_unverified_nce
+        if allow_unverified_nce:
+            self.context.check_hostname = False
+            self.context.verify_mode = ssl.CERT_NONE
+        self.opener = urllib.request.build_opener(NceHTTPSHandler(context=self.context), NoRedirect())
         self.lock = threading.Lock()
         self.snapshot = {'alarms': [], 'source': 'none', 'complete': False, 'total': 0, 'read': 0}
         # One captured page is explicitly a partial snapshot, never the full live list.
@@ -89,7 +106,7 @@ class Reader:
             for page in range(max_pages):
                 p.update({'from': page * 55 + 1, 'to': (page + 1) * 55})
                 req = urllib.request.Request(self.url, data=json.dumps(payload).encode(), headers=self.headers, method='POST')
-                with urllib.request.urlopen(req, context=self.context, timeout=30) as response:
+                with self.opener.open(req, timeout=30) as response:
                     body = json.load(response)
                 params = body.get('parameters', {})
                 if not isinstance(params.get('data'), list):
@@ -108,7 +125,8 @@ class Reader:
                 if not batch:
                     break
             self.snapshot = dict(alarms=normalize(rows), source='NCE', complete=complete,
-                                 total=total or 0, read=len(rows), updated=datetime.now(timezone.utc).isoformat())
+                                 total=total or 0, read=len(rows), updated=datetime.now(timezone.utc).isoformat(),
+                                 unverifiedNce=self.unverified_nce)
             return self.snapshot
         finally:
             self.lock.release()
@@ -138,7 +156,7 @@ def serve(reader, port=8765):
             if not self.trusted():
                 return self.send_json({'error': 'Host invalid'}, 403)
             if self.path == '/api/alarms':
-                return self.send_json(dict(reader.snapshot, token=token))
+                return self.send_json(dict(reader.snapshot, token=token, unverifiedNce=reader.unverified_nce))
             if self.path.startswith('/api/'):
                 return self.send_json({'error': 'Not found'}, 404)
             super().do_GET()
@@ -150,6 +168,9 @@ def serve(reader, port=8765):
                 return self.send_json({'error': 'Not found'}, 404)
             try:
                 self.send_json(reader.sync())
+            except urllib.error.HTTPError as error:
+                message = 'Sesiunea NCE a expirat sau accesul este refuzat. Selectează un HAR nou.' if error.code in (301, 302, 303, 307, 308, 401, 403) else 'Serverul NCE nu a acceptat cererea de alarme.'
+                self.send_json({'error': message}, 502)
             except urllib.error.URLError as error:
                 if isinstance(error.reason, ssl.SSLCertVerificationError):
                     message = 'Certificatul NCE nu este acceptat. Configurează certificatul CA intern cu --ca. Verificarea TLS rămâne activă.'
@@ -160,6 +181,8 @@ def serve(reader, port=8765):
                 self.send_json({'error': 'Preluarea nu a fost finalizată. Sesiunea poate fi expirată sau lista schimbată. Datele anterioare sunt păstrate.'}, 502)
     server = ThreadingHTTPServer(('127.0.0.1', port), Handler)
     print(f'OLT ORO local: http://127.0.0.1:{port}/', flush=True)
+    if reader.unverified_nce:
+        print('Exceptie TLS activa numai pentru serverul NCE.', flush=True)
     print('Inchide aceasta consola pentru a opri serviciul.', flush=True)
     server.serve_forever()
 
@@ -168,5 +191,6 @@ if __name__ == '__main__':
     parser.add_argument('--har', required=True, help='HAR local cu sesiunea NCE curentă')
     parser.add_argument('--ca', help='Certificat CA intern PEM, dacă nu este acceptat implicit')
     parser.add_argument('--port', type=int, default=8765)
+    parser.add_argument('--allow-unverified-nce', action='store_true', help='Excepție TLS numai pentru serverul NCE, fără redirecturi')
     args = parser.parse_args()
-    serve(Reader(args.har, args.ca), args.port)
+    serve(Reader(args.har, args.ca, args.allow_unverified_nce), args.port)
