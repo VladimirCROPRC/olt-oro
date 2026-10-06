@@ -1,8 +1,9 @@
 'use strict';
-const DATA_VERSION='20261006-6';
-let fiberAlarms=[];
+const DATA_VERSION='20261006-7';
+let fiberAlarms=[],oltAlarmAliases={};
+function alarmOltName(name){const value=name.trim().toUpperCase();return (oltAlarmAliases[value]||value).trim().toUpperCase()}
 function selectAlarmOlts(){if(!selectedData)return;for(const olt of selectedData.olts){if(olt.ports.some(p=>alarmsForPort(olt.name,p.port).length))selectedOlts.add(olt.name)}}
-function alarmsForPort(olt,port){const bits=port.replace(/^Sl\.\s*/i,'').split('/').map(x=>/^\d+$/.test(x)?String(Number(x)):x);return fiberAlarms.filter(a=>a.olt.trim().toUpperCase()===olt.trim().toUpperCase()&&(bits.length===2?a.frame==='0'&&bits[0]===a.slot&&bits[1]===a.port:bits.length===3&&bits[0]===a.frame&&bits[1]===a.slot&&bits[2]===a.port))}
+function alarmsForPort(olt,port){const bits=port.replace(/^Sl\.\s*/i,'').split('/').map(x=>/^\d+$/.test(x)?String(Number(x)):x);return fiberAlarms.filter(a=>alarmOltName(a.olt)===alarmOltName(olt)&&(bits.length===2?a.frame==='0'&&bits[0]===a.slot&&bits[1]===a.port:bits.length===3&&bits[0]===a.frame&&bits[1]===a.slot&&bits[2]===a.port))}
 function portIsDown(olt,port){return downPorts.has(portKey(olt,port))||alarmsForPort(olt,port).some(a=>a.kind==='LOS')}
 
 const $=id=>document.getElementById(id),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

@@ -147,6 +147,15 @@ class Reader:
             self.lock.release()
 
 def serve(reader, port=8765):
+    def alarm_aliases():
+        path = Path(__file__).resolve().parent / '.local-alarms' / 'olt-aliases.json'
+        try:
+            aliases = json.loads(path.read_text(encoding='utf-8'))
+            if not isinstance(aliases, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in aliases.items()):
+                return {}
+            return aliases
+        except (OSError, ValueError):
+            return {}
     token = secrets.token_urlsafe(32)
     root = Path(__file__).resolve().parent / 'dist'
     class Handler(SimpleHTTPRequestHandler):
@@ -171,7 +180,7 @@ def serve(reader, port=8765):
             if not self.trusted():
                 return self.send_json({'error': 'Host invalid'}, 403)
             if self.path == '/api/alarms':
-                return self.send_json(dict(reader.snapshot, token=token, unverifiedNce=reader.unverified_nce, sessionAuthPresent=reader.session_auth_present))
+                return self.send_json(dict(reader.snapshot, token=token, unverifiedNce=reader.unverified_nce, sessionAuthPresent=reader.session_auth_present, oltAliases=alarm_aliases()))
             if self.path.startswith('/api/'):
                 return self.send_json({'error': 'Not found'}, 404)
             super().do_GET()
@@ -211,7 +220,7 @@ def serve(reader, port=8765):
                     document = json.loads(self.rfile.read(length).decode('utf-8-sig'))
                     replacement = Reader(document, reader.ca, reader.unverified_nce)
                     reader = replacement
-                    return self.send_json(dict(reader.snapshot, unverifiedNce=reader.unverified_nce, sessionAuthPresent=reader.session_auth_present))
+                    return self.send_json(dict(reader.snapshot, unverifiedNce=reader.unverified_nce, sessionAuthPresent=reader.session_auth_present, oltAliases=alarm_aliases()))
                 except (ValueError, KeyError, TypeError):
                     return self.send_json({'error': 'HAR invalid sau fără cererea NCE 1103. Sesiunea anterioară este păstrată.'}, 400)
             if self.path != '/api/alarms/sync':

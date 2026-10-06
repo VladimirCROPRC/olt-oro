@@ -6,6 +6,7 @@ document.querySelector('.sidebar').insertBefore(alarmPanel,$('port-panel'));
 let localAlarmToken=null,lastAlarmUpdate=null;
 function acceptAlarmSnapshot(data){
  lastAlarmUpdate=data.updated||null;
+ oltAlarmAliases=data.oltAliases||{};
  fiberAlarms=data.alarms||[];
  const browserAgent=data.source.startsWith('Agent browser');$('sync-alarms').disabled=browserAgent;$('sync-alarms').textContent=browserAgent?'Agent: actualizare automată':'Preia alarme fibra';
  const los=fiberAlarms.filter(a=>a.kind==='LOS').length,ont=fiberAlarms.length-los;
