@@ -1,5 +1,5 @@
 'use strict';
-const DATA_VERSION='20261007-2';
+const DATA_VERSION='20261007-3';
 let fiberAlarms=[],oltAlarmAliases={};
 function alarmOltName(name){const value=name.trim().toUpperCase();return (oltAlarmAliases[value]||value).trim().toUpperCase()}
 function selectAlarmOlts(){if(!selectedData)return;for(const olt of selectedData.olts){if(olt.ports.some(p=>alarmsForPort(olt.name,p.port).length))selectedOlts.add(olt.name)}}
@@ -42,6 +42,7 @@ const dpNumbers=aliases=>Array.from(new Set(aliases.flatMap(alias=>Array.from(al
 const natural=(a,b)=>a.localeCompare(b,'ro',{numeric:true,sensitivity:'base'});
 const portKey=(olt,port)=>JSON.stringify([olt,port]);
 const coordinateKey=point=>JSON.stringify([point.lat,point.lng]);
+function popupAttributes(point){return 'ORO-C Alias: '+esc(point.orocAlias||'—')+'<br>Node code: '+esc(point.nodeCode||'—')+'<br>'}
 function locationLinks(lat,lng){
  const point=encodeURIComponent(lat+','+lng);
  return '<div class="location-links"><a href="https://www.google.com/maps/search/?api=1&query='+point+'" target="_blank" rel="noopener noreferrer">Google Maps ↗</a><a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint='+point+'" target="_blank" rel="noopener noreferrer">Street View ↗</a></div>';
@@ -139,7 +140,7 @@ function renderMap(fit){
     const key=coordinateKey(dp);let point=points.get(key);
     if(!point){point={lat:dp.lat,lng:dp.lng,down:false,rank:0,color:'#22c55e',connections:new Map()};points.set(key,point)}
     point.down=point.down||down;if(style.rank>point.rank){point.rank=style.rank;point.color=style.color}
-    point.connections.set(JSON.stringify([o.name,p.port,dp.alias]),{olt:o.name,port:p.port,alias:dp.alias,down});
+    point.connections.set(JSON.stringify([o.name,p.port,dp.alias]),{olt:o.name,port:p.port,alias:dp.alias,orocAlias:dp.orocAlias,nodeCode:dp.nodeCode,down});
    }
   }
  }
@@ -147,7 +148,7 @@ function renderMap(fit){
   if(onlyDown&&!point.down&&point.rank===0)continue;
   const color=point.color;
   const marker=L.circleMarker([point.lat,point.lng],{radius:7,weight:2,color:'#07151e',fillColor:color,fillOpacity:.95,down:point.down}).addTo(dpMarkers);
-  marker.bindPopup('<strong>DP / splitter nivel 1</strong><div class="dp-popup">'+Array.from(point.connections.values()).map(c=>`<div><strong>${esc(c.alias||'Alias lipsă')}</strong><br>${esc(c.olt)} / ${esc(c.port)}${c.down?' <b class="down-label">DOWN</b>':''}</div>`).join('')+'</div>'+locationLinks(point.lat,point.lng),{maxWidth:360});
+  marker.bindPopup('<strong>DP / splitter nivel 1</strong><div class="dp-popup">'+Array.from(point.connections.values()).map(c=>`<div><strong>${esc(c.alias||'Alias lipsă')}</strong><br>${popupAttributes(c)}${esc(c.olt)} / ${esc(c.port)}${c.down?' <b class="down-label">DOWN</b>':''}</div>`).join('')+'</div>'+locationLinks(point.lat,point.lng),{maxWidth:360});
   const numbers=dpNumbers(Array.from(point.connections.values()).map(c=>c.alias));
   if(numbers.length)marker.bindTooltip(esc(numbers.join(', ')),{permanent:true,direction:'right',offset:[8,0],className:'dp-number-label'+(point.down?' dp-number-down':'')});
   if(point.down)redMarkers.push(marker);
@@ -169,14 +170,14 @@ function renderOdbs(){
     const key=coordinateKey(odb);let point=points.get(key);
     if(!point){point={lat:odb.lat,lng:odb.lng,rank:0,color:'#22c55e',connections:new Map()};points.set(key,point)}
     if(style.rank>point.rank){point.rank=style.rank;point.color=style.color}
-    point.connections.set(JSON.stringify([o.name,p.port,odb.id,odb.alias]),{olt:o.name,port:p.port,alias:odb.alias,id:odb.id});
+    point.connections.set(JSON.stringify([o.name,p.port,odb.id,odb.alias]),{olt:o.name,port:p.port,alias:odb.alias,id:odb.id,orocAlias:odb.orocAlias,nodeCode:odb.nodeCode});
    }
   }
  }
  for(const point of points.values()){
   const connections=Array.from(point.connections.values());
   const marker=L.marker([point.lat,point.lng],{icon:L.divIcon({className:'odb-map-icon',html:'<span style="background:'+point.color+'"></span>',iconSize:[24,24],iconAnchor:[12,12]})}).addTo(odbMarkers);
-  marker.bindPopup('<strong>ODB / splitter nivel 2</strong><div class="dp-popup">'+connections.map(c=>'<div><strong>'+esc(c.alias||'Alias lipsă')+'</strong><br>'+esc(c.olt)+' / '+esc(c.port)+'</div>').join('')+'</div><small>Culoarea indică starea portului OLT.</small>'+locationLinks(point.lat,point.lng),{maxWidth:360});
+  marker.bindPopup('<strong>ODB / splitter nivel 2</strong><div class="dp-popup">'+connections.map(c=>'<div><strong>'+esc(c.alias||'Alias lipsă')+'</strong><br>'+popupAttributes(c)+esc(c.olt)+' / '+esc(c.port)+'</div>').join('')+'</div><small>Culoarea indică starea portului OLT.</small>'+locationLinks(point.lat,point.lng),{maxWidth:360});
   const labels=Array.from(new Set(connections.flatMap(c=>Array.from(c.alias.matchAll(/ODB[\s_-]*(\d+)/gi),m=>'ODB'+m[1]))));
   marker.bindTooltip(esc(labels.join(', ')||'SPL-2'),{direction:'top',permanent:true,className:'odb-number-label'});
  }

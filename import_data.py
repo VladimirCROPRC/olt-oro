@@ -90,7 +90,7 @@ def build(workbook, directory, output):
                     stats[level+'MissingCoordinates']+=1
                 else:
                     alias=(row.get(columns['ORO Alias']) or '').strip()
-                    point={'alias':alias,'lat':lat,'lng':lng}
+                    point={'alias':alias,'lat':lat,'lng':lng,'orocAlias':(row.get(columns.get('ORO-C Alias','')) or '').strip(),'nodeCode':(row.get(columns.get('Node code','')) or '').strip()}
                     if function=='SPL-1':p['dps'][(alias,lat,lng)]=point
                     else:
                         point['id']=str(row.get(columns.get('Id','A')) or '')
