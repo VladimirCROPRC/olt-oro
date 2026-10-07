@@ -1,5 +1,5 @@
 'use strict';
-const DATA_VERSION='20261007-1';
+const DATA_VERSION='20261007-2';
 let fiberAlarms=[],oltAlarmAliases={};
 function alarmOltName(name){const value=name.trim().toUpperCase();return (oltAlarmAliases[value]||value).trim().toUpperCase()}
 function selectAlarmOlts(){if(!selectedData)return;for(const olt of selectedData.olts){if(olt.ports.some(p=>alarmsForPort(olt.name,p.port).length))selectedOlts.add(olt.name)}}
@@ -86,9 +86,9 @@ function renderPorts(){
   const ports=o.ports.filter(p=>(o.name+' '+p.port+' '+p.speeds.join(' ')).toUpperCase().includes(q));
   if(!ports.length)return '';
   const checked=selectedOlts.has(o.name);
-  return `<details class="olt" data-olt="${oi}" ${openOlts.get(String(oi))!==false?'open':''}><summary><strong>${esc(o.name)}</strong><span>${ports.length} porturi</span></summary><label class="olt-select"><input type="checkbox" data-olt-check="${oi}" ${checked?'checked':''}> Afișează ${esc(o.name)} pe hartă</label><div class="table-wrap"><table><thead><tr><th>DOWN</th><th>Placă / port</th><th>Viteză</th><th>ODB</th><th title="Cea mai recentă apariție a alarmelor portului">Last occurred</th><th title="Cea mai recentă ștergere a alarmelor portului">Cleared On</th></tr></thead><tbody>${ports.map(p=>{
+  return `<details class="olt" data-olt="${oi}" ${openOlts.get(String(oi))!==false?'open':''}><summary><strong>${esc(o.name)}</strong><span>${ports.length} porturi</span></summary><label class="olt-select"><input type="checkbox" data-olt-check="${oi}" ${checked?'checked':''}> Afișează DP pentru ${esc(o.name)} pe hartă</label><div class="table-wrap"><table><thead><tr><th>DOWN</th><th>Placă / port</th><th>Viteză</th><th>ODB</th><th title="Cea mai recentă apariție a alarmelor portului">Last occurred</th><th title="Cea mai recentă ștergere a alarmelor portului">Cleared On</th></tr></thead><tbody>${ports.map(p=>{
    const down=portIsDown(o.name,p.port),pi=o.ports.indexOf(p),alarms=alarmsForPort(o.name,p.port),ontCount=portOntCount(o.name,p.port),odbCount=(p.odbs||[]).length;
-   return `<tr class="${down?'down-row':''}"><td><label class="down-choice"><input type="checkbox" data-port-check="${pi}" data-olt-index="${oi}" aria-label="DOWN ${esc(o.name)} / ${esc(p.port)}" ${down?'checked':''} ${checked?'':'disabled'}><span>${down?'DOWN':'—'}</span>${ontCount?'<small class="ont-alarm">'+ontCount+' ONT</small>':''}</label></td><td class="port-name">${esc(p.port.replace(/unset/gi,'nespecificat'))}</td><td>${p.speeds.length?p.speeds.map(s=>'<span class="speed">'+esc(s)+'</span>').join(' '):'—'}</td><td><label class="odb-choice"><input type="checkbox" data-odb-check="${pi}" data-olt-index="${oi}" aria-label="Afișează ODB ${esc(o.name)} / ${esc(p.port)}" ${selectedOdbPorts.has(portKey(o.name,p.port))?'checked':''} ${checked&&odbCount?'':'disabled'}>${odbCount}</label></td><td class="alarm-date">${displayAlarmTime(latestAlarmTime(alarms,'occurred'))}</td><td class="alarm-date">${displayAlarmTime(latestAlarmTime(alarms,'clearedOn'))}</td></tr>`;
+   return `<tr class="${down?'down-row':''}"><td><label class="down-choice"><input type="checkbox" data-port-check="${pi}" data-olt-index="${oi}" aria-label="DOWN ${esc(o.name)} / ${esc(p.port)}" ${down?'checked':''} ${checked?'':'disabled'}><span>${down?'DOWN':'—'}</span>${ontCount?'<small class="ont-alarm">'+ontCount+' ONT</small>':''}</label></td><td class="port-name">${esc(p.port.replace(/unset/gi,'nespecificat'))}</td><td>${p.speeds.length?p.speeds.map(s=>'<span class="speed">'+esc(s)+'</span>').join(' '):'—'}</td><td><label class="odb-choice"><input type="checkbox" data-odb-check="${pi}" data-olt-index="${oi}" aria-label="Afișează ODB ${esc(o.name)} / ${esc(p.port)}" ${selectedOdbPorts.has(portKey(o.name,p.port))?'checked':''} ${odbCount?'':'disabled'}>${odbCount}</label></td><td class="alarm-date">${displayAlarmTime(latestAlarmTime(alarms,'occurred'))}</td><td class="alarm-date">${displayAlarmTime(latestAlarmTime(alarms,'clearedOn'))}</td></tr>`;
   }).join('')}</tbody></table></div></details>`;
  }).join('')||'<p class="no-results">Niciun port corespunde filtrului.</p>';
 }
@@ -96,7 +96,7 @@ function onSelectionChange(event){
  const input=event.target;
  if(input.dataset.oltCheck!==undefined){
   const o=selectedData.olts[Number(input.dataset.oltCheck)];
-  if(input.checked)selectedOlts.add(o.name);else{selectedOlts.delete(o.name);o.ports.forEach(p=>{downPorts.delete(portKey(o.name,p.port));selectedOdbPorts.delete(portKey(o.name,p.port))})}
+  if(input.checked)selectedOlts.add(o.name);else{selectedOlts.delete(o.name);o.ports.forEach(p=>{downPorts.delete(portKey(o.name,p.port))})}
   renderPorts();renderMap(true);
  }else if(input.dataset.odbCheck!==undefined){
   const o=selectedData.olts[Number(input.dataset.oltIndex)],p=o.ports[Number(input.dataset.odbCheck)],key=portKey(o.name,p.port);
@@ -161,7 +161,6 @@ function renderMap(fit){
 function renderOdbs(){
  odbMarkers.clearLayers();const points=new Map();
  for(const o of selectedData.olts){
-  if(!selectedOlts.has(o.name))continue;
   for(const p of o.ports){
    if(!selectedOdbPorts.has(portKey(o.name,p.port)))continue;
    const style=portAlarmStyle(o.name,p.port);
