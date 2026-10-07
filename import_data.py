@@ -9,7 +9,7 @@ from lxml import etree, html
 def rows(path):
     with ZipFile(path) as archive:
         strings=[]
-        for _, item in etree.iterparse(archive.open('xl/sharedStrings.xml'),events=['end'],tag='{*}si'):
+        for _, item in etree.iterparse(archive.open('xl/sharedStrings.xml') if 'xl/sharedStrings.xml' in archive.namelist() else __import__('io').BytesIO(b'<sst/>'),events=['end'],tag='{*}si'):
             strings.append(''.join(t.text or '' for t in item.findall('.//{*}t')))
             item.clear()
             while item.getprevious() is not None: del item.getparent()[0]
@@ -49,10 +49,13 @@ def build(workbook, directory, output):
     equipment={}; stats=Counter(); unmatched=Counter(); malformed=Counter()
     for number,row in rows(workbook):
         if number==1:
-            assert row.get('Q')=='OLT', 'Expected OLT in column Q'
+            columns={value:key for key,value in row.items()}
+            assert columns.get('OLT') in ('M','Q'), 'Expected OLT in column M (merged) or Q (legacy)'
+            assert all(field in columns for field in ('Function','Latitude','Longitude','ORO Alias')), 'Missing splitter columns'
+            stats['oltColumn']=columns['OLT']
             continue
         stats['sourceRows']+=1
-        value=(row.get('Q') or '').strip()
+        value=(row.get(columns['OLT']) or '').strip()
         if not value:
             stats['emptyOltRows']+=1
             continue
@@ -71,22 +74,27 @@ def build(workbook, directory, output):
             key=code or 'OLT:'+name
             if key not in sites: sites[key]={'code':'','name':name,'olts':{}}
             olt=sites[key]['olts'].setdefault(name,{})
-            p=olt.setdefault(slot+'/'+port,{'port':slot+'/'+port,'speeds':set(),'references':0,'functions':Counter(),'dps':{}})
+            p=olt.setdefault(slot+'/'+port,{'port':slot+'/'+port,'speeds':set(),'references':0,'functions':Counter(),'dps':{},'odbs':{}})
             if speed:p['speeds'].add(speed)
             p['references']+=1
-            if row.get('F'):p['functions'][row['F']]+=1
+            function=(row.get(columns['Function']) or '').strip().upper()
+            if function:p['functions'][function]+=1
             stats['connectionReferences']+=1
-            if row.get('F')=='SPL-1':
-                stats['level1References']+=1
+            if function in ('SPL-1','SPL-2'):
+                level='level1' if function=='SPL-1' else 'level2'
+                stats[level+'References']+=1
                 try:
-                    lat,lng=float(row['K']),float(row['L'])
+                    lat,lng=float(row[columns['Latitude']]),float(row[columns['Longitude']])
                     assert math.isfinite(lat) and math.isfinite(lng) and -90<=lat<=90 and -180<=lng<=180 and (lat!=0 or lng!=0)
                 except (KeyError,ValueError,TypeError,AssertionError):
-                    stats['level1MissingCoordinates']+=1
+                    stats[level+'MissingCoordinates']+=1
                 else:
-                    alias=(row.get('B') or '').strip()
+                    alias=(row.get(columns['ORO Alias']) or '').strip()
                     point={'alias':alias,'lat':lat,'lng':lng}
-                    p['dps'][(alias,lat,lng)]=point
+                    if function=='SPL-1':p['dps'][(alias,lat,lng)]=point
+                    else:
+                        point['id']=str(row.get(columns.get('Id','A')) or '')
+                        p['odbs'][(point['id'],alias,lat,lng)]=point
     output.mkdir(parents=True,exist_ok=True);data=output/'data';data.mkdir(exist_ok=True)
     index=[];written=set()
     for i,(key,site) in enumerate(sorted(sites.items(),key=lambda x:natural(x[0]))):
@@ -94,7 +102,7 @@ def build(workbook, directory, output):
         for name,ports in sorted(site['olts'].items(),key=lambda x:natural(x[0])):
             records=[]
             for _,port in sorted(ports.items(),key=lambda x:natural(x[0])):
-                port['speeds']=sorted(port['speeds']);port['functions']=dict(port['functions']);port['dps']=list(port['dps'].values());records.append(port)
+                port['speeds']=sorted(port['speeds']);port['functions']=dict(port['functions']);port['dps']=list(port['dps'].values());port['odbs']=list(port['odbs'].values());records.append(port)
             olts.append({'name':name,'ports':records})
         count=sum(len(o['ports']) for o in olts)
         item={'id':str(i),'code':site['code'],'name':site['name'],'olts':len(olts),'ports':count}
@@ -112,6 +120,8 @@ def build(workbook, directory, output):
     stats['olts']=sum(s['olts'] for s in index);stats['ports']=sum(s['ports'] for s in index)
     stats['malformedReferences']=sum(malformed.values())
     stats['portsWithLevel1Dp']=sum(bool(p['dps']) for site in sites.values() for olt in site['olts'].values() for p in olt.values())
+    stats['portsWithLevel2Odb']=sum(bool(p['odbs']) for site in sites.values() for olt in site['olts'].values() for p in olt.values())
+    stats['level2PortAssociations']=sum(len(p['odbs']) for site in sites.values() for olt in site['olts'].values() for p in olt.values())
     (output/'index.json').write_text(json.dumps({'sites':index,'stats':dict(stats)},ensure_ascii=False,separators=(',',':')),encoding='utf-8')
     (output.parent/'import-report.json').write_text(json.dumps({'stats':dict(stats),'unassignedOlts':dict(unmatched),'malformed':dict(malformed)},ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps(dict(stats),ensure_ascii=False),flush=True)

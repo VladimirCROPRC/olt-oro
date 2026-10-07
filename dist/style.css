@@ -28,3 +28,5 @@
 .alarm-panel{padding:8px 0;display:flex;flex-wrap:wrap;gap:5px}.alarm-panel p{width:100%;font-size:11px;line-height:1.4;margin:3px 0;color:#b8cad4}.ont-alarm{color:#ffc04a;margin-left:4px;white-space:nowrap}
 
 .alarm-date{font-size:10px;line-height:1.4;white-space:normal;min-width:72px}
+
+.odb-choice{display:flex;align-items:center;gap:3px;font-size:11px}.odb-map-icon{display:flex;align-items:center;justify-content:center}.odb-map-icon span{width:12px;height:12px;border:2px solid #07151e;box-shadow:0 0 0 1px #fff;border-radius:1px}.odb-number-label{font-size:10px;background:#fff9e9;border:1px solid #c29e48;color:#342600}
